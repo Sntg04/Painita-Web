@@ -37,7 +37,7 @@ const Formulario = () => {
   useEffect(() => {
     const user_id = localStorage.getItem('user_id');
     if (user_id) {
-      fetch(`http://localhost:5000/api/formulario/estado/${user_id}`)
+  fetch(`/api/formulario/estado/${user_id}`)
         .then(res => res.json())
         .then(data => {
           if (data.existe && typeof data.paso_actual === 'number') {

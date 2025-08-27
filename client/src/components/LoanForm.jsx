@@ -15,7 +15,7 @@ export default function LoanForm({ onOtpSent }) {
 
   const enviarOTP = async () => {
     try {
-      await axios.post('http://localhost:5000/send-otp', {
+      await axios.post('/api/send-otp', {
         phone: form.celular,
       });
       onOtpSent();

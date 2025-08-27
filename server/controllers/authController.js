@@ -7,8 +7,18 @@ import twilio from 'twilio';
 // .env define TWILIO_ACCOUNT_SID y TWILIO_AUTH_TOKEN
 const accountSid = process.env.TWILIO_ACCOUNT_SID;
 const authToken = process.env.TWILIO_AUTH_TOKEN;
-const twilioClient = twilio(accountSid, authToken);
 const twilioPhone = process.env.TWILIO_PHONE;
+const twilioServiceSid = process.env.TWILIO_SERVICE_SID;
+// Solo inicializar cliente Twilio si hay credenciales
+let twilioClient = null;
+if (accountSid && authToken) {
+  try {
+    twilioClient = twilio(accountSid, authToken);
+  } catch (e) {
+    console.warn('Twilio no inicializado:', e.message);
+    twilioClient = null;
+  }
+}
 
 // Almacenamiento temporal de OTPs (puedes escalarlo con PostgreSQL si lo deseas)
 const otpStore = new Map();
@@ -20,14 +30,36 @@ export const sendOTP = async (req, res) => {
   otpStore.set(phone, otp); // Guarda temporalmente
 
   try {
-    await twilioClient.messages.create({
-      body: `Tu código Painita es: ${otp}`,
-      from: twilioPhone,
-      to: `+57${phone}`, // Asegura formato internacional
-    });
+    // 1) Preferir Twilio Verify si SERVICE_SID está configurado
+    if (accountSid && authToken && twilioServiceSid) {
+      try {
+        const client = twilio(accountSid, authToken);
+        const v = await client.verify.v2.services(twilioServiceSid).verifications.create({
+          to: `+57${phone}`,
+          channel: 'sms',
+        });
+        console.log(`📲 OTP (Verify) solicitado a ${phone}: status=${v.status}`);
+        return res.json({ success: true, via: 'verify', status: v.status });
+      } catch (e) {
+        console.error('❌ Twilio Verify fallo:', e.message);
+        // Continúa al siguiente método si falla Verify
+      }
+    }
 
-    console.log(`📲 OTP enviado a ${phone}: ${otp}`);
-    res.json({ success: true });
+    // 2) Fallback: mensajes SMS directos con código propio si twilioPhone está configurado
+    if (twilioClient && twilioPhone) {
+      await twilioClient.messages.create({
+        body: `Tu código Painita es: ${otp}`,
+        from: twilioPhone,
+        to: `+57${phone}`,
+      });
+      console.log(`📲 OTP (SMS) enviado a ${phone}: ${otp}`);
+      return res.json({ success: true, via: 'sms' });
+    }
+
+    // 3) Sin credenciales Twilio: modo desarrollo
+    console.warn('TWILIO no configurado. Modo desarrollo: devolviendo dev_otp');
+    return res.json({ success: true, dev_otp: otp, via: 'dev' });
   } catch (err) {
     console.error('❌ Error al enviar OTP:', err.message);
     res.status(500).json({ success: false, error: err.message });
@@ -36,16 +68,32 @@ export const sendOTP = async (req, res) => {
 
 export const verifyOTP = async (req, res) => {
   const { phone, code } = req.body;
-  const storedOtp = otpStore.get(phone);
+  try {
+    // 1) Verificación con Twilio Verify si está configurado
+    if (accountSid && authToken && twilioServiceSid) {
+      const client = twilio(accountSid, authToken);
+      const result = await client.verify.v2.services(twilioServiceSid).verificationChecks.create({
+        to: `+57${phone}`,
+        code,
+      });
+      const verified = result.status === 'approved';
+      console.log(`✅ Verificación (Verify) para ${phone}: ${verified ? 'OK' : 'FAIL'}`);
+      return res.json({ verified });
+    }
 
-  if (storedOtp && storedOtp === code) {
-    otpStore.delete(phone); // Elimina después de verificar
-    console.log(`✅ OTP verificado para ${phone}`);
-    return res.json({ verified: true });
+    // 2) Fallback local con otpStore
+    const storedOtp = otpStore.get(phone);
+    if (storedOtp && storedOtp === code) {
+      otpStore.delete(phone);
+      console.log(`✅ Verificación (local) para ${phone}`);
+      return res.json({ verified: true });
+    }
+    console.warn(`❌ OTP incorrecto para ${phone}`);
+    return res.json({ verified: false });
+  } catch (e) {
+    console.error('❌ Error al verificar OTP:', e.message);
+    return res.status(500).json({ verified: false, error: e.message });
   }
-
-  console.warn(`❌ OTP incorrecto para ${phone}`);
-  return res.json({ verified: false });
 };
 
 export const registerUser = async (req, res) => {

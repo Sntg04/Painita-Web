@@ -27,6 +27,7 @@ export default function Home() {
   const [codigo, setCodigo] = useState('');
   const [error, setError] = useState('');
   const [mensaje, setMensaje] = useState('');
+  const [devOtp, setDevOtp] = useState('');
   const [loginOpen, setLoginOpen] = useState(false);
 
   // Tasas y utilidades
@@ -111,7 +112,8 @@ export default function Home() {
     try {
       const response = await apiSendOTP(celular);
       if (response.data.success) {
-        setMensaje('Código enviado al celular');
+  setMensaje('Código enviado al celular');
+  setDevOtp(response.data?.dev_otp || '');
       } else {
         setError('No se pudo enviar el código.');
       }
@@ -361,6 +363,12 @@ export default function Home() {
                     <Typography variant="body2" sx={{ color: '#B00020', fontFamily: 'Nunito, Arial, sans-serif' }} mt={3}>
                       {mensaje}
                     </Typography>
+                    {devOtp && (
+                      <Typography variant="caption" sx={{ display: 'block', mt: 1 }} color="text.secondary">
+                        Código de prueba (local): {devOtp}{' '}
+                        <Button size="small" onClick={() => setCodigo(String(devOtp))}>Pegar código</Button>
+                      </Typography>
+                    )}
                     <TextField
                       fullWidth
                       label="Código OTP"

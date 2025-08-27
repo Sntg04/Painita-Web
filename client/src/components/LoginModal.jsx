@@ -11,6 +11,7 @@ export default function LoginModal({ open, onClose, onLoginSuccess }) {
   const [code, setCode] = useState('');
   const [newPass, setNewPass] = useState('');
   const [step, setStep] = useState('login'); // 'login' | 'otp' | 'newpass'
+  const [devOtp, setDevOtp] = useState('');
 
   const handleLogin = async () => {
     setError('');
@@ -41,6 +42,7 @@ export default function LoginModal({ open, onClose, onLoginSuccess }) {
     try {
       const r = await sendOTP(cleanedPhone);
       if (r.data?.success) {
+        setDevOtp(r.data?.dev_otp || '');
         setForgot(true);
         setStep('otp');
       } else setError('No se pudo enviar el OTP');
@@ -134,6 +136,12 @@ export default function LoginModal({ open, onClose, onLoginSuccess }) {
             <Button variant="text" sx={{ mt: 1 }} onClick={startForgot}>
               Reenviar código
             </Button>
+            {devOtp && (
+              <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 1 }}>
+                Código de prueba (local): {devOtp}{' '}
+                <Button size="small" onClick={() => setCode(String(devOtp))}>Pegar</Button>
+              </Typography>
+            )}
           </>
         )}
 

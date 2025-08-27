@@ -15,10 +15,21 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 // Middlewares
-app.use(cors({
-  origin: 'http://localhost:5173', // Ajusta según tu frontend
+// CORS configurable: allow local dev, configured origins, and Render domains
+const corsOrigins = (process.env.CORS_ORIGIN || '').split(',').map(s => s.trim()).filter(Boolean);
+const corsOptions = {
   credentials: true,
-}));
+  origin: (origin, callback) => {
+    // Allow requests with no origin (mobile apps, curl) or same-origin
+    if (!origin) return callback(null, true);
+    const isLocal = /^(http:\/\/localhost(:\d+)?|http:\/\/127\.0\.0\.1(:\d+)?)/.test(origin);
+    const isRender = /\.onrender\.com$/.test(new URL(origin).hostname);
+    const isWhitelisted = corsOrigins.includes(origin);
+    if (isLocal || isRender || isWhitelisted) return callback(null, true);
+    return callback(new Error(`CORS blocked for origin: ${origin}`));
+  }
+};
+app.use(cors(corsOptions));
 app.use(express.json());
 
 // Servir archivos estáticos subidos (configurable)
@@ -52,7 +63,9 @@ app.use('/api', (req, res, next) => {
 });
 
 // Prueba de conexión a PostgreSQL (una vez al inicio)
-pool.connect()
+const hasDbUrl = !!process.env.DATABASE_URL;
+if (hasDbUrl) {
+  pool.connect()
   .then(client => {
     console.log('🟢 Conectado a PostgreSQL');
     // Asegurar tipo y default de 'estado', y normalizar datos existentes
@@ -94,8 +107,15 @@ pool.connect()
   })
   .catch((err) => {
     console.error('🔴 Error al conectar a PostgreSQL:', err.message);
-    process.exit(1);
+    if (process.env.NODE_ENV === 'production') {
+      process.exit(1);
+    } else {
+      console.warn('Continuando sin conexión a DB en desarrollo...');
+    }
   });
+} else {
+  console.warn('DATABASE_URL no está configurada. Iniciando sin conexión a DB.');
+}
 
 // Ruta base opcional
 app.get('/', (req, res) => {
@@ -121,8 +141,8 @@ app.get('/api/ping', (_req, res) => {
 const clientDist = path.join(process.cwd(), '../client/dist');
 if (fs.existsSync(clientDist)) {
   app.use(express.static(clientDist));
-  app.get('*', (req, res, next) => {
-    if (req.path.startsWith('/api') || req.path.startsWith('/uploads')) return next();
+  // Use regex to avoid Express 5 path-to-regexp '*' issue
+  app.get(/^(?!\/api|\/uploads).*/, (req, res, next) => {
     const indexFile = path.join(clientDist, 'index.html');
     if (fs.existsSync(indexFile)) return res.sendFile(indexFile);
     return next();

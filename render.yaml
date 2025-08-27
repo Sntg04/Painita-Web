@@ -3,13 +3,15 @@ services:
     name: painita-loans
     env: node
     plan: free
+    rootDir: server
     buildCommand: |
-      cd client && npm ci && npm run build
+      # build client from monorepo rootDir=server
+      cd ../client && npm ci && npm run build
+      # install server deps (we're already in /server as rootDir)
       cd ../server && npm ci
     startCommand: node index.js
-    rootDir: server
     autoDeploy: true
-  envVars:
+    envVars:
       - key: NODE_ENV
         value: production
       - key: UPLOADS_DIR

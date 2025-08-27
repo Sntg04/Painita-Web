@@ -1,8 +1,10 @@
 import { Box, Typography, TextField, Button } from '@mui/material';
 import { useState } from 'react';
 import axios from 'axios';
+// Usa el proxy de Vite hacia /api para evitar CORS y URLs hardcodeadas
+const API_BASE = '/api';
 
-export default function OTPVerification({ phone, onVerified }) {
+export default function OTPVerification({ phone, onVerified, devOtp }) {
   const [codigo, setCodigo] = useState('');
   const [error, setError] = useState('');
   const [mensaje, setMensaje] = useState('');
@@ -24,7 +26,7 @@ export default function OTPVerification({ phone, onVerified }) {
     }
 
     try {
-      const response = await axios.post('http://localhost:5000/verify-otp', {
+  const response = await axios.post(`${API_BASE}/verify-otp`, {
         phone,
         code: codigo,
       });
@@ -84,6 +86,18 @@ export default function OTPVerification({ phone, onVerified }) {
       >
         Verificar
       </Button>
+
+      {/* Ayuda de desarrollo: mostrar OTP de prueba si viene del backend */}
+      {devOtp && (
+        <Box mt={2}>
+          <Typography variant="caption" color="text.secondary">
+            Código de prueba (solo local): {devOtp}
+          </Typography>
+          <Button size="small" sx={{ ml: 1 }} onClick={() => setCodigo(String(devOtp))}>
+            Pegar código
+          </Button>
+        </Box>
+      )}
 
       {mensaje && (
         <Typography variant="body2" color="success.main" mt={2}>

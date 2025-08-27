@@ -7,7 +7,8 @@ export default function useSyncFormulario(formularioId, data, pasoActual) {
 
     const sync = async () => {
       try {
-        const API_BASE_URL = 'http://localhost:5000/api';
+  // Usa el proxy de Vite y variable de entorno para base URL del API
+  const API_BASE_URL = import.meta?.env?.VITE_API_BASE_URL || '/api';
         let dbId = localStorage.getItem('formularioDbId');
 
         const user_id = localStorage.getItem('user_id');
