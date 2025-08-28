@@ -179,15 +179,22 @@ app.get('/api/ping', (_req, res) => {
 });
 
 // Producción: servir cliente compilado (Vite)
-const clientDist = path.join(process.cwd(), '../client/dist');
-if (fs.existsSync(clientDist)) {
-  app.use(express.static(clientDist));
-  // Use regex to avoid Express 5 path-to-regexp '*' issue
+// Buscamos en varias ubicaciones para mayor robustez en Render
+const candidateDists = [
+  path.join(process.cwd(), 'client_dist'),      // copiado dentro de /server en build
+  path.join(process.cwd(), '../client/dist'),   // monorepo vecino (si Render lo incluye)
+];
+const foundDist = candidateDists.find(p => fs.existsSync(p));
+if (foundDist) {
+  app.use(express.static(foundDist));
+  // Use regex para evitar problemas con path-to-regexp en Express 5
   app.get(/^(?!\/api|\/uploads).*/, (req, res, next) => {
-    const indexFile = path.join(clientDist, 'index.html');
+    const indexFile = path.join(foundDist, 'index.html');
     if (fs.existsSync(indexFile)) return res.sendFile(indexFile);
     return next();
   });
+} else {
+  console.warn('Cliente compilado no encontrado. Mostrando solo backend.');
 }
 
 // Debug: columnas de la tabla clientes
