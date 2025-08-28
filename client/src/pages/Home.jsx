@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { sendOTP as apiSendOTP, verifyOTP as apiVerifyOTP } from '@/services/api';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -12,6 +12,7 @@ import {
   CardContent,
   Fade,
   Grow,
+  Zoom,
 } from '@mui/material';
 import TopBar from '../components/ui/TopBar';
 import PasswordSetup from '../components/PasswordSetup';
@@ -29,6 +30,11 @@ export default function Home() {
   const [mensaje, setMensaje] = useState('');
   const [devOtp, setDevOtp] = useState('');
   const [loginOpen, setLoginOpen] = useState(false);
+  const [heroIn, setHeroIn] = useState(false);
+  useEffect(() => {
+    const t = setTimeout(() => setHeroIn(true), 200);
+    return () => clearTimeout(t);
+  }, []);
 
   // Tasas y utilidades
   const EA = 0.23; // 23% E.A
@@ -160,7 +166,28 @@ export default function Home() {
         backgroundRepeat: 'repeat',
       }}
     >
-  <TopBar />
+      <TopBar />
+
+      {/* Hero message */}
+      <Zoom in={heroIn} timeout={650}>
+        <Box sx={{ mt: { xs: 10, md: 12 }, mb: 2, px: 2, textAlign: 'center', maxWidth: '100%' }}>
+          <Typography
+            sx={{
+              fontFamily: 'Playfair Display, serif',
+              fontWeight: 800,
+              color: '#B00020',
+              letterSpacing: { xs: 0.5, sm: 1 },
+              fontSize: 'clamp(0.9rem, 2.5vw + 0.3rem, 2.6rem)',
+              textShadow: '0 2px 12px rgba(176,0,32,0.18)',
+              textTransform: 'uppercase',
+              whiteSpace: 'nowrap'
+            }}
+          >
+            PAINITA UNA AYUDA FINANCIERA TAN VALIOSA COMO UNA GEMA.
+          </Typography>
+          <Box sx={{ width: 120, height: 4, bgcolor: '#B00020', borderRadius: 2, mx: 'auto', mt: 1 }} />
+        </Box>
+      </Zoom>
 
       {/* Main content */}
       <Box
