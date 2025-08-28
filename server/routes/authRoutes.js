@@ -6,6 +6,7 @@ import {
   registerUser,
   loginUser,
   resetPassword,
+  debugTwilio,
 } from '../controllers/authController.js';
 
 const router = express.Router();
@@ -22,5 +23,8 @@ router.post('/verify-otp', verifyOTP);   // Verificar código OTP
 router.post('/register', registerUser);  // Crear usuario con contraseña
 router.post('/login', loginUser);        // 🔐 Iniciar sesión con celular y contraseña
 router.post('/reset-password', resetPassword); // 🔁 Restablecer contraseña con OTP
+
+// Debug endpoint (no sensible data leaked)
+router.get('/debug/twilio', debugTwilio);
 
 export default router;

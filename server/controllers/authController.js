@@ -23,8 +23,23 @@ if (accountSid && authToken) {
 // Almacenamiento temporal de OTPs (puedes escalarlo con PostgreSQL si lo deseas)
 const otpStore = new Map();
 
+export const debugTwilio = (_req, res) => {
+  const mask = (v) => (v ? `${String(v).slice(0, 6)}…${String(v).slice(-4)}` : null);
+  return res.json({
+    node_env: process.env.NODE_ENV || 'development',
+    api_base_url_hint: process.env.VITE_API_BASE_URL || '/api',
+    accountSid: mask(accountSid),
+    serviceSid: mask(twilioServiceSid),
+    hasTwilioClient: !!twilioClient,
+    hasTwilioPhone: !!twilioPhone,
+    viaVerifyEnabled: !!(accountSid && authToken && twilioServiceSid),
+    allowTrialDevOTP: process.env.ALLOW_TRIAL_DEV_OTP === 'true',
+  });
+};
+
 export const sendOTP = async (req, res) => {
   const { phone } = req.body;
+  const allowTrialDevOTP = process.env.ALLOW_TRIAL_DEV_OTP === 'true';
 
   const otp = Math.floor(100000 + Math.random() * 900000).toString();
   otpStore.set(phone, otp); // Guarda temporalmente
@@ -38,7 +53,11 @@ export const sendOTP = async (req, res) => {
           to: `+57${phone}`,
           channel: 'sms',
         });
-        console.log(`📲 OTP (Verify) solicitado a ${phone}: status=${v.status}`);
+        console.log(
+          `📲 OTP (Verify) solicitado a ${phone}: status=${v.status} (acct ${String(accountSid).slice(0, 6)}… svc ${String(
+            twilioServiceSid
+          ).slice(0, 6)}…)`
+        );
         return res.json({ success: true, via: 'verify', status: v.status });
       } catch (e) {
         console.error('❌ Twilio Verify fallo:', e.message);
@@ -52,7 +71,7 @@ export const sendOTP = async (req, res) => {
             error:
               'Tu cuenta de Twilio es de prueba y no puede enviar SMS a números no verificados. Verifica el número en Twilio o usa un número verificado.',
           };
-          if (process.env.NODE_ENV !== 'production') body.dev_otp = otp;
+          if (process.env.NODE_ENV !== 'production' || allowTrialDevOTP) body.dev_otp = otp;
           return res.status(400).json(body);
         }
         // Continúa al siguiente método si falla Verify por otro motivo
@@ -84,7 +103,7 @@ export const sendOTP = async (req, res) => {
         error:
           'Tu cuenta de Twilio es de prueba y no puede enviar SMS a números no verificados. Verifica el número en Twilio o usa un número verificado.',
       };
-      if (process.env.NODE_ENV !== 'production') body.dev_otp = otp;
+      if (process.env.NODE_ENV !== 'production' || allowTrialDevOTP) body.dev_otp = otp;
       return res.status(400).json(body);
     }
     const body = { success: false, error: 'No se pudo enviar el código. Intenta de nuevo más tarde.' };
