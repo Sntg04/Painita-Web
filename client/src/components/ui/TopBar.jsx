@@ -8,11 +8,16 @@ export default function TopBar({ children }) {
   return (
     <AppBar position="fixed" sx={{ bgcolor: '#B00020', boxShadow: 2, zIndex: 1201 }}>
       <Toolbar sx={{ minHeight: 64, display: 'flex', justifyContent: 'space-between' }}>
-        <Box onClick={() => navigate('/')} sx={{ display: 'flex', alignItems: 'center', gap: 1.5, cursor: 'pointer' }}>
-          <Box sx={{ width: 28, height: 28, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <img src="/logo.svg" alt="Painita" width={24} height={24} style={{ display: 'block', objectFit: 'contain' }} onError={(e) => { e.currentTarget.style.display = 'none'; }} />
-          </Box>
-          <Typography variant="h5" sx={{ fontFamily: 'Playfair Display, serif', color: '#fff', letterSpacing: 2 }}>
+        <Box onClick={() => navigate('/')} sx={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
+          <Typography
+            variant="h5"
+            sx={{
+              fontFamily: 'Playfair Display, serif',
+              color: '#fff',
+              letterSpacing: 2,
+              fontSize: { xs: 24, sm: 26, md: 28 }
+            }}
+          >
             Painita
           </Typography>
         </Box>
