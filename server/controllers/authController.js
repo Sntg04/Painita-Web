@@ -42,7 +42,20 @@ export const sendOTP = async (req, res) => {
         return res.json({ success: true, via: 'verify', status: v.status });
       } catch (e) {
         console.error('❌ Twilio Verify fallo:', e.message);
-        // Continúa al siguiente método si falla Verify
+        // Manejo especial para cuentas de prueba que no pueden enviar a números no verificados
+        const msg = (e?.message || '').toLowerCase();
+        const isTrialRestriction = msg.includes('trial') || msg.includes('no se puede enviar') || msg.includes('unverified') || e?.code === 21608;
+        if (isTrialRestriction) {
+          const body = {
+            success: false,
+            code: 'TRIAL_RESTRICTION',
+            error:
+              'Tu cuenta de Twilio es de prueba y no puede enviar SMS a números no verificados. Verifica el número en Twilio o usa un número verificado.',
+          };
+          if (process.env.NODE_ENV !== 'production') body.dev_otp = otp;
+          return res.status(400).json(body);
+        }
+        // Continúa al siguiente método si falla Verify por otro motivo
       }
     }
 
@@ -62,7 +75,21 @@ export const sendOTP = async (req, res) => {
     return res.json({ success: true, dev_otp: otp, via: 'dev' });
   } catch (err) {
     console.error('❌ Error al enviar OTP:', err.message);
-    res.status(500).json({ success: false, error: err.message });
+    const msg = (err?.message || '').toLowerCase();
+    const isTrialRestriction = msg.includes('trial') || msg.includes('no se puede enviar') || msg.includes('unverified') || err?.code === 21608;
+    if (isTrialRestriction) {
+      const body = {
+        success: false,
+        code: 'TRIAL_RESTRICTION',
+        error:
+          'Tu cuenta de Twilio es de prueba y no puede enviar SMS a números no verificados. Verifica el número en Twilio o usa un número verificado.',
+      };
+      if (process.env.NODE_ENV !== 'production') body.dev_otp = otp;
+      return res.status(400).json(body);
+    }
+    const body = { success: false, error: 'No se pudo enviar el código. Intenta de nuevo más tarde.' };
+    if (process.env.NODE_ENV !== 'production') body.detalle = err.message;
+    res.status(500).json(body);
   }
 };
 
@@ -71,14 +98,19 @@ export const verifyOTP = async (req, res) => {
   try {
     // 1) Verificación con Twilio Verify si está configurado
     if (accountSid && authToken && twilioServiceSid) {
-      const client = twilio(accountSid, authToken);
-      const result = await client.verify.v2.services(twilioServiceSid).verificationChecks.create({
-        to: `+57${phone}`,
-        code,
-      });
-      const verified = result.status === 'approved';
-      console.log(`✅ Verificación (Verify) para ${phone}: ${verified ? 'OK' : 'FAIL'}`);
-      return res.json({ verified });
+      try {
+        const client = twilio(accountSid, authToken);
+        const result = await client.verify.v2.services(twilioServiceSid).verificationChecks.create({
+          to: `+57${phone}`,
+          code,
+        });
+        const verified = result.status === 'approved';
+        console.log(`✅ Verificación (Verify) para ${phone}: ${verified ? 'OK' : 'FAIL'}`);
+        if (verified) return res.json({ verified: true });
+      } catch (e) {
+        console.warn('⚠️ Error al verificar con Twilio Verify, intentando fallback local:', e.message);
+        // continúa al fallback local
+      }
     }
 
     // 2) Fallback local con otpStore

@@ -118,13 +118,18 @@ export default function Home() {
     try {
       const response = await apiSendOTP(celular);
       if (response.data.success) {
-  setMensaje('Código enviado al celular');
-  setDevOtp(response.data?.dev_otp || '');
+        setMensaje('Código enviado al celular');
+        setDevOtp(response.data?.dev_otp || '');
       } else {
-        setError('No se pudo enviar el código.');
+        setError(response?.data?.error || 'No se pudo enviar el código.');
+        setDevOtp(response?.data?.dev_otp || '');
       }
     } catch (err) {
-      setError('Error de conexión al enviar el código: ' + (err?.message || ''));
+      const serverMsg = err?.response?.data?.error;
+      const dev = err?.response?.data?.dev_otp;
+      if (serverMsg) setError(serverMsg);
+      else setError('Error de conexión al enviar el código: ' + (err?.message || ''));
+      if (dev) setDevOtp(dev);
     }
   };
 
@@ -224,7 +229,7 @@ export default function Home() {
                 <Fade in timeout={1200}>
                   <Typography
                     variant="h4"
-                    sx={{ color: '#B00020', fontWeight: 'bold', fontFamily: 'Playfair Display, serif', letterSpacing: 1, mb: 2, fontSize: { xs: '1.3rem', md: '2rem' } }}
+                    sx={{ color: '#B00020', fontWeight: 900, fontFamily: 'Playfair Display, serif', letterSpacing: 1, mb: 2, fontSize: { xs: '1.3rem', md: '2rem' } }}
                     gutterBottom
                   >
                     Calcula tu crédito
