@@ -5,10 +5,12 @@ services:
     plan: free
     rootDir: server
     buildCommand: |
-      # build client from monorepo rootDir=server
-  cd ../client && npm ci --include=dev && npm run build
-      # install server deps (we're already in /server as rootDir)
-      cd ../server && npm ci
+      # Install server dependencies (we start in /server due to rootDir)
+      npm ci
+      # Build client from monorepo
+      cd ../client && npm ci --include=dev && npm run build
+      # Return to server (not strictly needed for startCommand)
+      cd ../server
     startCommand: node index.js
     autoDeploy: true
     envVars:
