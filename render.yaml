@@ -6,7 +6,7 @@ services:
     rootDir: server
     buildCommand: |
       # build client from monorepo rootDir=server
-      cd ../client && npm ci && npm run build
+  cd ../client && npm ci --include=dev && npm run build
       # install server deps (we're already in /server as rootDir)
       cd ../server && npm ci
     startCommand: node index.js
@@ -14,6 +14,9 @@ services:
     envVars:
       - key: NODE_ENV
         value: production
+      # Ensure devDependencies (like Vite) are installed during build on Render
+      - key: NPM_CONFIG_PRODUCTION
+        value: "false"
       - key: UPLOADS_DIR
         value: /opt/render/project/src/server/uploads
       # Set these securely in Render dashboard (override here in prod)
