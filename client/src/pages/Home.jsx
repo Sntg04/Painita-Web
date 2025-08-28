@@ -160,11 +160,7 @@ export default function Home() {
         backgroundRepeat: 'repeat',
       }}
     >
-      <TopBar>
-        <Button sx={{ color: '#fff', fontFamily: 'Nunito, Arial, sans-serif', fontWeight: 'bold' }} href="#beneficios">Beneficios</Button>
-        <Button sx={{ color: '#fff', fontFamily: 'Nunito, Arial, sans-serif', fontWeight: 'bold' }} href="#quienes">¿Quiénes somos?</Button>
-        <Button sx={{ color: '#fff', fontFamily: 'Nunito, Arial, sans-serif', fontWeight: 'bold' }} href="#opiniones">Opiniones</Button>
-      </TopBar>
+  <TopBar />
 
       {/* Main content */}
       <Box
