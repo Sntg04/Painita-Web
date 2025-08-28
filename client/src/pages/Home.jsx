@@ -243,7 +243,17 @@ export default function Home() {
                 <Fade in timeout={1200}>
                   <Typography
                     variant="h4"
-                    sx={{ color: '#B00020', fontWeight: 900, fontFamily: 'Playfair Display, serif', letterSpacing: 1, mb: 2, fontSize: { xs: '1.3rem', md: '2rem' } }}
+                    sx={{
+                      color: '#B00020',
+                      fontWeight: 900,
+                      fontFamily: 'Playfair Display, serif',
+                      letterSpacing: 1,
+                      mb: 2,
+                      fontSize: { xs: '1.3rem', md: '2rem' },
+                      WebkitTextStroke: '0.4px #B00020',
+                      paintOrder: 'stroke fill',
+                      textShadow: '0 0 0.6px rgba(176,0,32,0.45)'
+                    }}
                     gutterBottom
                   >
                     Calcula tu crédito
