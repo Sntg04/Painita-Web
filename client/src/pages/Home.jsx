@@ -12,10 +12,8 @@ import {
   CardContent,
   Fade,
   Grow,
-  AppBar,
-  Toolbar,
 } from '@mui/material';
-import NavMenu from '../components/ui/NavMenu';
+import TopBar from '../components/ui/TopBar';
 import PasswordSetup from '../components/PasswordSetup';
 import LoginModal from '../components/LoginModal';
 
@@ -162,26 +160,11 @@ export default function Home() {
         backgroundRepeat: 'repeat',
       }}
     >
-  <NavMenu topOffset={12} />
-      {/* AppBar */}
-      <AppBar position="fixed" sx={{ bgcolor: '#B00020', boxShadow: 2, zIndex: 1201 }}>
-        <Toolbar sx={{ minHeight: 64, display: 'flex', justifyContent: 'space-between' }}>
-          <Typography variant="h5" sx={{ fontFamily: 'Playfair Display, serif', color: '#fff', letterSpacing: 2 }}>
-            Painita
-          </Typography>
-          <Box sx={{ display: 'flex', gap: 3 }}>
-            <Button sx={{ color: '#fff', fontFamily: 'Nunito, Arial, sans-serif', fontWeight: 'bold' }} href="#beneficios">
-              Beneficios
-            </Button>
-            <Button sx={{ color: '#fff', fontFamily: 'Nunito, Arial, sans-serif', fontWeight: 'bold' }} href="#quienes">
-              ¿Quiénes somos?
-            </Button>
-            <Button sx={{ color: '#fff', fontFamily: 'Nunito, Arial, sans-serif', fontWeight: 'bold' }} href="#opiniones">
-              Opiniones
-            </Button>
-          </Box>
-        </Toolbar>
-      </AppBar>
+      <TopBar>
+        <Button sx={{ color: '#fff', fontFamily: 'Nunito, Arial, sans-serif', fontWeight: 'bold' }} href="#beneficios">Beneficios</Button>
+        <Button sx={{ color: '#fff', fontFamily: 'Nunito, Arial, sans-serif', fontWeight: 'bold' }} href="#quienes">¿Quiénes somos?</Button>
+        <Button sx={{ color: '#fff', fontFamily: 'Nunito, Arial, sans-serif', fontWeight: 'bold' }} href="#opiniones">Opiniones</Button>
+      </TopBar>
 
       {/* Main content */}
       <Box

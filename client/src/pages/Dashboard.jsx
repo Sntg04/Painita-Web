@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { Box, Paper, Typography, Button } from '@mui/material';
-import NavMenu from '../components/ui/NavMenu';
+import TopBar from '../components/ui/TopBar';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 export default function Dashboard() {
@@ -40,7 +40,7 @@ export default function Dashboard() {
         px: 2,
       }}
     >
-  <NavMenu />
+  <TopBar />
       <Paper
         elevation={6}
         sx={{

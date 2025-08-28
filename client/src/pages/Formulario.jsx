@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useEffect } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import useSyncFormulario from '@/hooks/useSyncFormulario';
-import NavMenu from '../components/ui/NavMenu';
+import TopBar from '../components/ui/TopBar';
 
 import Step1_PersonalInfo from '@/components/formulario/Step1_PersonalInfo';
 import Step2_Contacto from '@/components/formulario/Step2_Contacto';
@@ -156,7 +156,7 @@ const Formulario = () => {
         boxSizing: 'border-box',
       }}
     >
-  <NavMenu />
+  <TopBar />
       <div
         style={{
           width: '100%',
