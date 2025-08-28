@@ -148,7 +148,7 @@ const Formulario = () => {
     <div
       style={{
         width: '100vw',
-        height: '100vh',
+        minHeight: '100vh',
         display: 'grid',
         placeItems: 'center',
         backgroundColor: '#ffffff',
@@ -161,13 +161,14 @@ const Formulario = () => {
         style={{
           width: '100%',
           maxWidth: '600px',
-          maxHeight: '90vh',
+          maxHeight: 'calc(100vh - 120px)',
           overflowY: 'auto',
           backgroundColor: '#ffffff',
           borderRadius: '1rem',
           boxShadow: '0 0 20px rgba(0,0,0,0.1)',
-          padding: '2rem',
+          padding: '1.25rem',
           boxSizing: 'border-box',
+          marginTop: '80px'
         }}
       >
         {pasos[pasoActual]}

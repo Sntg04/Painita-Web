@@ -29,24 +29,25 @@ export default function Dashboard() {
   };
 
   return (
-    <Box
+  <Box
       sx={{
-        height: '100vh',
+    minHeight: '100vh',
         width: '100vw',
         display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
+    justifyContent: 'center',
+    alignItems: 'center',
         background: 'linear-gradient(to bottom, #F9F9F9, #ECECEC)',
-        px: 2,
+    px: 2,
+    pt: { xs: 10, md: 12 }
       }}
     >
   <TopBar />
-      <Paper
+    <Paper
         elevation={6}
         sx={{
-          maxWidth: 500,
+      maxWidth: 520,
           width: '100%',
-          p: 5,
+      p: { xs: 3, md: 5 },
           borderRadius: 4,
           textAlign: 'center',
           bgcolor: '#fff',
