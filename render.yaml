@@ -5,11 +5,11 @@ services:
     plan: free
     rootDir: server
     buildCommand: |
-      # Install server dependencies (we start in /server due to rootDir)
-      npm ci
-      # Build client from monorepo
-      cd ../client && npm ci --include=dev && npm run build
-      # Return to server (not strictly needed for startCommand)
+      # Install server dependencies (no lockfile assumption)
+      npm install --omit=dev
+      # Build client from monorepo (install dev deps for Vite; fallback to npm install if ci unavailable)
+      cd ../client && (npm ci --include=dev || npm install) && npm run build
+      # Return to server
       cd ../server
     startCommand: node index.js
     autoDeploy: true
