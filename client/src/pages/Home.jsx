@@ -181,14 +181,28 @@ export default function Home() {
               fontFamily: 'Playfair Display, serif',
               fontWeight: 800,
               color: '#B00020',
-              letterSpacing: { xs: 0.35, sm: 0.8 },
-              fontSize: 'clamp(0.8rem, 1.8vw + 0.2rem, 2.1rem)',
-              textShadow: '0 2px 12px rgba(176,0,32,0.18)',
+              letterSpacing: { xs: 0.6, md: 1 },
+              fontSize: { xs: 'clamp(1.1rem, 5vw + 0.2rem, 1.7rem)', md: 'clamp(1.4rem, 2vw + 0.6rem, 2.4rem)' },
+              textShadow: '0 2px 12px rgba(176,0,32,0.15)',
               textTransform: 'uppercase',
-              whiteSpace: 'nowrap'
+              lineHeight: 1.12,
             }}
           >
-            PAINITA UNA AYUDA FINANCIERA TAN VALIOSA COMO UNA GEMA.
+            PAINITA UNA AYUDA FINANCIERA
+          </Typography>
+          <Typography
+            sx={{
+              fontFamily: 'Playfair Display, serif',
+              fontWeight: 800,
+              color: '#B00020',
+              letterSpacing: { xs: 0.6, md: 1 },
+              fontSize: { xs: 'clamp(1.05rem, 4.6vw + 0.2rem, 1.6rem)', md: 'clamp(1.3rem, 1.8vw + 0.5rem, 2.2rem)' },
+              textShadow: '0 2px 10px rgba(176,0,32,0.12)',
+              textTransform: 'uppercase',
+              lineHeight: 1.12,
+            }}
+          >
+            TAN VALIOSA COMO UNA GEMA.
           </Typography>
           <Box sx={{ width: 120, height: 4, bgcolor: '#B00020', borderRadius: 2, mx: 'auto', mt: 1 }} />
         </Box>
