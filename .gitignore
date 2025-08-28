@@ -1,0 +1,11 @@
+node_modules/
+dist/
+dist-ssr/
+.DS_Store
+.env
+client/.env
+server/.env
+*.log
+uploads/
+server/uploads/
+coverage/

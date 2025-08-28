@@ -19,8 +19,6 @@
   "author": "Santiago",
   "license": "ISC",
   "dependencies": {
-    "@emotion/react": "^11.14.0",
-    "@emotion/styled": "^11.14.1",
     "axios": "^1.11.0",
     "bcrypt": "^5.1.1",
     "cors": "^2.8.5",
