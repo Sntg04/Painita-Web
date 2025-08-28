@@ -56,11 +56,7 @@ app.use('/api', formularioRoutes);
 // Direct route registration to avoid any router issues
 app.post('/api/reset-password', resetPassword);
 
-// Fallback para rutas /api no encontradas (debug)
-app.use('/api', (req, res, next) => {
-  console.warn('[api 404]', req.method, req.originalUrl);
-  return res.status(404).json({ error: 'API route not found', path: req.originalUrl });
-});
+// Nota: el fallback 404 de /api se declara más abajo, tras registrar todas las rutas
 
 // Prueba de conexión a PostgreSQL (una vez al inicio)
 const hasDbUrl = !!process.env.DATABASE_URL;
@@ -98,6 +94,51 @@ if (hasDbUrl) {
           END;
         ELSE
           RAISE NOTICE 'Columna estado no existe en formularios';
+        END IF;
+
+        -- Asegurar columnas para almacenar imágenes en DB
+        IF NOT EXISTS (
+          SELECT 1 FROM information_schema.columns
+          WHERE table_name = 'formularios' AND column_name = 'id_front_data'
+        ) THEN
+          BEGIN
+            EXECUTE 'ALTER TABLE formularios ADD COLUMN id_front_data bytea';
+          EXCEPTION WHEN OTHERS THEN
+            RAISE NOTICE 'No se pudo crear columna id_front_data';
+          END;
+        END IF;
+
+        IF NOT EXISTS (
+          SELECT 1 FROM information_schema.columns
+          WHERE table_name = 'formularios' AND column_name = 'id_back_data'
+        ) THEN
+          BEGIN
+            EXECUTE 'ALTER TABLE formularios ADD COLUMN id_back_data bytea';
+          EXCEPTION WHEN OTHERS THEN
+            RAISE NOTICE 'No se pudo crear columna id_back_data';
+          END;
+        END IF;
+
+        IF NOT EXISTS (
+          SELECT 1 FROM information_schema.columns
+          WHERE table_name = 'formularios' AND column_name = 'id_front_mime'
+        ) THEN
+          BEGIN
+            EXECUTE 'ALTER TABLE formularios ADD COLUMN id_front_mime text';
+          EXCEPTION WHEN OTHERS THEN
+            RAISE NOTICE 'No se pudo crear columna id_front_mime';
+          END;
+        END IF;
+
+        IF NOT EXISTS (
+          SELECT 1 FROM information_schema.columns
+          WHERE table_name = 'formularios' AND column_name = 'id_back_mime'
+        ) THEN
+          BEGIN
+            EXECUTE 'ALTER TABLE formularios ADD COLUMN id_back_mime text';
+          EXCEPTION WHEN OTHERS THEN
+            RAISE NOTICE 'No se pudo crear columna id_back_mime';
+          END;
         END IF;
       END
       $$;

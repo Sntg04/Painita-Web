@@ -5,17 +5,8 @@ import path from 'path';
 
 const router = express.Router();
 
-// --- Subida de imágenes de documentos ---
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    const dir = process.env.UPLOADS_DIR || path.join(process.cwd(), 'uploads');
-    cb(null, dir);
-  },
-  filename: function (req, file, cb) {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname));
-  }
-});
+// --- Subida de imágenes de documentos (a memoria para guardar en DB) ---
+const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
 // Ruta para subir documentos
@@ -30,18 +21,22 @@ router.post('/formulario/upload-docs', upload.fields([
     if (!idFrontFile || !idBackFile) {
       return res.status(400).json({ error: 'Faltan archivos.' });
     }
-    // Construir rutas relativas y URLs públicas accesibles vía HTTP
-    const frontRel = `/uploads/${path.basename(idFrontFile.path)}`;
-    const backRel = `/uploads/${path.basename(idBackFile.path)}`;
+    // Guardar contenido binario directamente en PostgreSQL (bytea)
+    const frontBuf = idFrontFile.buffer;
+    const backBuf = idBackFile.buffer;
+    const frontMime = idFrontFile.mimetype || 'application/octet-stream';
+    const backMime = idBackFile.mimetype || 'application/octet-stream';
 
-    // Guardar rutas relativas en DB (portables)
     await pool.query(
-      'UPDATE formularios SET id_front = $1, id_back = $2 WHERE id = $3 AND user_id = $4',
-      [frontRel, backRel, formulario_id, user_id]
+      'UPDATE formularios SET id_front_data = $1, id_front_mime = $2, id_back_data = $3, id_back_mime = $4 WHERE id = $5 AND user_id = $6',
+      [frontBuf, frontMime, backBuf, backMime, formulario_id, user_id]
     );
 
+    // Exponer URLs para consultar las imágenes desde DB
     const base = `${req.protocol}://${req.get('host')}`;
-    res.json({ success: true, id_front: `${base}${frontRel}`, id_back: `${base}${backRel}` });
+    const idFrontUrl = `${base}/api/formulario/${formulario_id}/doc/id_front`;
+    const idBackUrl = `${base}/api/formulario/${formulario_id}/doc/id_back`;
+    res.json({ success: true, id_front: idFrontUrl, id_back: idBackUrl });
   } catch (error) {
     console.error('Error al subir documentos:', error);
     res.status(500).json({ error: 'Error al subir documentos.' });
@@ -166,3 +161,28 @@ router.get('/formulario/estado/:user_id', async (req, res) => {
 });
 
 export default router;
+
+// --- Servir imágenes almacenadas en DB ---
+// GET /api/formulario/:id/doc/id_front | id_back
+router.get('/formulario/:id/doc/:which', async (req, res) => {
+  try {
+    const { id, which } = req.params;
+    const allowed = new Set(['id_front', 'id_back']);
+    if (!allowed.has(which)) return res.status(400).json({ error: 'Parámetro inválido.' });
+
+    const mimeCol = which === 'id_front' ? 'id_front_mime' : 'id_back_mime';
+    const dataCol = which === 'id_front' ? 'id_front_data' : 'id_back_data';
+    const q = `SELECT ${mimeCol} as mime, ${dataCol} as data FROM formularios WHERE id = $1 LIMIT 1`;
+    const r = await pool.query(q, [id]);
+    if (r.rows.length === 0 || !r.rows[0].data) {
+      return res.status(404).json({ error: 'No encontrado' });
+    }
+    const mime = r.rows[0].mime || 'application/octet-stream';
+    const buf = r.rows[0].data; // es un Buffer en node-postgres
+    res.setHeader('Content-Type', mime);
+    res.send(buf);
+  } catch (e) {
+    console.error('Error al servir documento:', e);
+    res.status(500).json({ error: 'Error al servir documento' });
+  }
+});

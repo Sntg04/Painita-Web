@@ -2,7 +2,22 @@ import { createTheme } from '@mui/material/styles';
 import palette from './palette';
 
 const theme = createTheme({
-  palette,
+  palette: {
+    primary: {
+      main: palette.rojoPainita,
+      contrastText: '#FFFFFF',
+    },
+    secondary: {
+      main: palette.acento,
+    },
+    text: {
+      primary: palette.texto,
+    },
+    background: {
+      default: palette.fondo,
+      paper: '#FFFFFF',
+    },
+  },
   typography: {
     fontFamily: [
       'Playfair Display',
@@ -53,6 +68,32 @@ const theme = createTheme({
     },
   },
   components: {
+    MuiOutlinedInput: {
+      styleOverrides: {
+        root: {
+          '& .MuiOutlinedInput-notchedOutline': {
+            borderColor: '#BDBDBD',
+          },
+          '&:hover .MuiOutlinedInput-notchedOutline': {
+            borderColor: '#909090',
+          },
+          '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+            borderColor: palette.rojoPainita,
+          },
+          '&.Mui-focused': { boxShadow: 'none' },
+          '&:focus-within': { boxShadow: 'none' },
+        },
+      },
+    },
+    MuiInputLabel: {
+      styleOverrides: {
+        root: {
+          '&.Mui-focused': {
+            color: palette.rojoPainita,
+          },
+        },
+      },
+    },
     MuiButton: {
       styleOverrides: {
         root: {
