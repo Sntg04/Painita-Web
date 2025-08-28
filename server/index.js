@@ -158,8 +158,17 @@ if (hasDbUrl) {
   console.warn('DATABASE_URL no está configurada. Iniciando sin conexión a DB.');
 }
 
-// Ruta base opcional
+// Ruta base: si existe build del cliente, servir index.html; si no, mensaje backend
 app.get('/', (req, res) => {
+  const candidates = [
+    path.join(process.cwd(), 'client_dist'),
+    path.join(process.cwd(), '../client/dist'),
+  ];
+  const dist = candidates.find(p => fs.existsSync(p));
+  if (dist) {
+    const indexFile = path.join(dist, 'index.html');
+    if (fs.existsSync(indexFile)) return res.sendFile(indexFile);
+  }
   res.send('🧠 Painita backend activo');
 });
 
