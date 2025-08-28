@@ -8,8 +8,8 @@ export default function TopBar({ children }) {
   const [loginOpen, setLoginOpen] = React.useState(false);
 
   return (
-    <AppBar position="fixed" sx={{ bgcolor: '#B00020', boxShadow: 2, zIndex: 1201 }}>
-      <Toolbar sx={{ minHeight: 64, display: 'flex', justifyContent: 'space-between' }}>
+    <AppBar position="fixed" square sx={{ bgcolor: '#B00020', boxShadow: 2, zIndex: 1201, left: 0, right: 0, borderRadius: 0 }}>
+      <Toolbar disableGutters sx={{ minHeight: 64, display: 'flex', justifyContent: 'space-between', px: 2 }}>
         <Box onClick={() => navigate('/')} sx={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
           <Typography
             variant="h5"
