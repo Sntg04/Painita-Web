@@ -17,8 +17,9 @@ export default function TopBar({ children }) {
               fontFamily: 'Playfair Display, serif',
               color: '#fff',
               letterSpacing: 2,
-        fontSize: { xs: 28, sm: 32, md: 34 },
-        fontWeight: 800
+        fontSize: { xs: 22, sm: 26, md: 30 },
+        fontWeight: 800,
+        lineHeight: 1.1
             }}
           >
             Painita
@@ -35,6 +36,10 @@ export default function TopBar({ children }) {
               fontWeight: 'bold',
               textTransform: 'none',
               fontFamily: 'Nunito, Arial, sans-serif',
+              px: { xs: 1.5, sm: 2 },
+              py: { xs: 0.5, sm: 0.75 },
+              fontSize: { xs: '0.8rem', sm: '0.875rem' },
+              minWidth: { xs: 110, sm: 140 },
               '&:hover': { bgcolor: '#FFE5E5' }
             }}
           >

@@ -170,14 +170,14 @@ export default function Home() {
 
       {/* Hero message */}
       <Zoom in={heroIn} timeout={650}>
-        <Box sx={{ mt: { xs: 10, md: 12 }, mb: 2, px: 2, textAlign: 'center', maxWidth: '100%' }}>
+        <Box sx={{ mt: { xs: 9, md: 12 }, mb: { xs: 1.5, md: 2 }, px: { xs: 1.5, md: 2 }, textAlign: 'center', maxWidth: '100%' }}>
           <Typography
             sx={{
               fontFamily: 'Playfair Display, serif',
               fontWeight: 800,
               color: '#B00020',
-              letterSpacing: { xs: 0.5, sm: 1 },
-              fontSize: 'clamp(0.9rem, 2.5vw + 0.3rem, 2.6rem)',
+              letterSpacing: { xs: 0.35, sm: 0.8 },
+              fontSize: 'clamp(0.8rem, 1.8vw + 0.2rem, 2.1rem)',
               textShadow: '0 2px 12px rgba(176,0,32,0.18)',
               textTransform: 'uppercase',
               whiteSpace: 'nowrap'
