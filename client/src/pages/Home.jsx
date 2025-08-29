@@ -16,7 +16,7 @@ import {
 } from '@mui/material';
 import TopBar from '../components/ui/TopBar';
 import PasswordSetup from '../components/PasswordSetup';
-import LoginModal from '../components/LoginModal';
+// Eliminado LoginModal local; el acceso a login queda en la TopBar
 
 export default function Home() {
   const navigate = useNavigate();
@@ -29,11 +29,13 @@ export default function Home() {
   const [error, setError] = useState('');
   const [mensaje, setMensaje] = useState('');
   const [devOtp, setDevOtp] = useState('');
-  const [loginOpen, setLoginOpen] = useState(false);
+  // Eliminado estado de login modal local
   const [heroIn, setHeroIn] = useState(false);
+  const [contentIn, setContentIn] = useState(false);
   useEffect(() => {
-    const t = setTimeout(() => setHeroIn(true), 200);
-    return () => clearTimeout(t);
+    const t1 = setTimeout(() => setHeroIn(true), 200);
+    const t2 = setTimeout(() => setContentIn(true), 1000); // aparece después del hero
+    return () => { clearTimeout(t1); clearTimeout(t2); };
   }, []);
 
   // Tasas y utilidades
@@ -74,21 +76,7 @@ export default function Home() {
   ];
 
   // UI helpers y handlers faltantes
-  const LoginBox = () => (
-    <Box
-      sx={{
-        mt: 3,
-        cursor: 'pointer',
-        transition: '0.3s',
-        '&:hover': { boxShadow: 4, bgcolor: '#FFE5E5' },
-      }}
-      onClick={() => setLoginOpen(true)}
-    >
-      <Typography variant="body1" color="#B00020" fontWeight="bold">
-        ¿Ya tienes cuenta? <span style={{ textDecoration: 'underline' }}>Iniciar sesión</span>
-      </Typography>
-    </Box>
-  );
+  // Eliminado LoginBox (link de iniciar sesión dentro de la tarjeta)
 
   const handleSolicitar = () => {
     try { localStorage.setItem('painita_plazo', String(plazo)); } catch {}
@@ -163,7 +151,7 @@ export default function Home() {
         alignItems: 'center',
         position: 'relative',
         px: { xs: 0, md: 0 },
-        py: 4,
+  py: 0,
         overflowX: 'hidden',
         background: 'linear-gradient(135deg, #fff 0%, #fbeaec 100%)',
         backgroundImage:
@@ -175,7 +163,7 @@ export default function Home() {
 
       {/* Hero message */}
       <Zoom in={heroIn} timeout={650}>
-        <Box sx={{ mt: { xs: 9, md: 12 }, mb: { xs: 1.5, md: 2 }, px: { xs: 1.5, md: 2 }, textAlign: 'center', maxWidth: '100%' }}>
+        <Box sx={{ mt: { xs: 9, md: 12 }, mb: { xs: 0, md: 0.5 }, px: { xs: 1.5, md: 2 }, textAlign: 'center', maxWidth: '100%' }}>
           <Typography
             sx={{
               fontFamily: 'Playfair Display, serif',
@@ -207,13 +195,13 @@ export default function Home() {
       </Zoom>
 
       {/* Main content */}
-      <Box
+    <Box
         sx={{
           display: 'flex',
           justifyContent: 'center',
           alignItems: isCelular ? 'center' : 'flex-start',
-          mt: isCelular ? 0 : { xs: 10, md: 12 },
-          mb: isCelular ? 0 : 6,
+      mt: isCelular ? 0 : { xs: 4, md: 6 },
+      mb: 0,
           minHeight: isCelular ? 'calc(100vh - 64px)' : 'auto',
           px: { xs: 0, md: 0 },
           width: '100%',
@@ -221,14 +209,14 @@ export default function Home() {
           boxSizing: 'border-box',
         }}
       >
-        <Grow in timeout={800}>
+        <Grow in={contentIn} timeout={800}>
           {fase === 'calculadora' ? (
-            <Paper
+      <Paper
               elevation={6}
               sx={{
-                maxWidth: { xs: '100%', sm: 540, md: 1040 },
+                maxWidth: { xs: '100%', sm: 520, md: 920 },
                 width: '100%',
-                p: { xs: 2, md: 3 },
+        p: { xs: 1, md: 2 },
                 borderRadius: 4,
                 bgcolor: '#FFFFFF',
                 boxShadow: '0 8px 32px rgba(176,0,32,0.08)',
@@ -236,12 +224,11 @@ export default function Home() {
                 mx: 'auto',
                 display: 'flex',
                 flexDirection: 'column',
-                minHeight: { xs: 'auto', md: 480 },
               }}
             >
               <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, gap: { xs: 2, md: 3 }, alignItems: { xs: 'stretch', md: 'stretch' }, flex: 1 }}>
                 {/* Left: Calculator */}
-                <Paper elevation={0} sx={{ flex: 1, p: { xs: 1, md: 2 }, bgcolor: 'transparent', textAlign: 'center', display: 'flex', flexDirection: 'column', height: '100%' }}>
+        <Paper elevation={0} sx={{ flex: 1, p: { xs: 0.5, md: 1 }, bgcolor: 'transparent', textAlign: 'center', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', height: '100%' }}>
                   <Fade in timeout={1200}>
                     <Typography
                       variant="h4"
@@ -250,7 +237,7 @@ export default function Home() {
                         fontWeight: 900,
                         fontFamily: 'Playfair Display, serif',
                         letterSpacing: 1,
-                        mb: 2,
+                        mb: 1.1,
                         fontSize: { xs: '1.3rem', md: '2rem' },
                         WebkitTextStroke: '0.4px #B00020',
                         paintOrder: 'stroke fill',
@@ -261,7 +248,7 @@ export default function Home() {
                       Calcula tu crédito
                     </Typography>
                   </Fade>
-
+                  <Box sx={{ display: 'flex', flexDirection: 'column', gap: { xs: 1.1, md: 2.2 }, pt: { xs: 0.18, md: 0.5 } }}>
                   <Typography variant="h6" gutterBottom sx={{ color: '#B00020', fontFamily: 'Playfair Display, serif' }}>
                     ¿Cuánto necesitas?
                   </Typography>
@@ -273,14 +260,14 @@ export default function Home() {
                     onChange={(e, val) => setMonto(val)}
                     valueLabelDisplay="auto"
                     sx={{
-                      mb: 2,
+                      mb: 1.1,
                       color: '#B00020',
                       '& .MuiSlider-thumb': { bgcolor: '#B00020' },
                       '& .MuiSlider-track': { bgcolor: '#B00020' },
                       '& .MuiSlider-rail': { bgcolor: '#fbeaec' },
                     }}
                   />
-                  <Typography variant="body1" mb={3} sx={{ color: '#000000', fontFamily: 'Nunito, Arial, sans-serif' }}>
+                  <Typography variant="body1" mb={1.9} sx={{ color: '#000000', fontFamily: 'Nunito, Arial, sans-serif' }}>
                     Monto seleccionado: <strong style={{ color: '#B00020', fontFamily: 'Nunito, Arial, sans-serif' }}>${monto.toLocaleString()}</strong>
                   </Typography>
 
@@ -295,26 +282,23 @@ export default function Home() {
                     onChange={(e, val) => setPlazo(val)}
                     valueLabelDisplay="auto"
                     sx={{
-                      mb: 2,
+                      mb: 1.1,
                       color: '#B00020',
                       '& .MuiSlider-thumb': { bgcolor: '#B00020' },
                       '& .MuiSlider-track': { bgcolor: '#B00020' },
                       '& .MuiSlider-rail': { bgcolor: '#fbeaec' },
                     }}
                   />
-                  <Typography variant="body1" mb={3} sx={{ color: '#000000', fontFamily: 'Nunito, Arial, sans-serif' }}>
+                  <Typography variant="body1" mb={1.9} sx={{ color: '#000000', fontFamily: 'Nunito, Arial, sans-serif' }}>
                     Plazo seleccionado: <strong style={{ color: '#B00020', fontFamily: 'Nunito, Arial, sans-serif' }}>{plazo} días</strong>
                   </Typography>
-
-                  {/* Empuja acciones al fondo para usar todo el alto */}
-                  <Box sx={{ flexGrow: 1 }} />
-
+                  </Box>
 
                   <Button
                     variant="contained"
                     fullWidth
                     sx={{
-                      py: 1.5,
+                      py: 1,
                       fontWeight: 'bold',
                       fontSize: '1rem',
                       backgroundColor: '#B00020',
@@ -333,58 +317,52 @@ export default function Home() {
                     Solicitar Crédito
                   </Button>
 
-                  <LoginBox />
-                  <LoginModal
-                    open={loginOpen}
-                    onClose={() => setLoginOpen(false)}
-                    onLoginSuccess={() => navigate('/dashboard', { state: { monto, plazo } })}
-                  />
                 </Paper>
 
                 {/* Right: Breakdown panel */}
-                <Paper elevation={0} sx={{ flex: 1, p: { xs: 2, md: 3 }, pt: { xs: 1, md: 2 }, bgcolor: '#B00020', color: '#FFFFFF', borderRadius: 3, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                <Paper elevation={0} sx={{ flex: 1, p: { xs: 1.1, md: 2 }, pt: { xs: 0.5, md: 1 }, bgcolor: '#B00020', color: '#FFFFFF', borderRadius: 3, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
           <Typography
                     variant="h4"
                     sx={{
                       fontFamily: 'Playfair Display, serif',
                       fontWeight: 900,
                       letterSpacing: 1,
-                      mb: 1.5,
+            mb: 0.9,
                       fontSize: { xs: '1.3rem', md: '2rem' },
             textAlign: 'center',
                     }}
                   >
                     Desglose del crédito
                   </Typography>
-                  <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
                     <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                      <Typography variant="body2" sx={{ fontSize: { xs: '1.05rem', md: '1.15rem' } }}>Valor solicitado</Typography>
-                      <Typography variant="body2" fontWeight="bold" sx={{ fontSize: { xs: '1.05rem', md: '1.15rem' } }}>{formatCurrency(monto)}</Typography>
+            <Typography variant="body2" sx={{ fontSize: { xs: '1.05rem', md: '1.15rem' }, lineHeight: { xs: 1.15, md: 1.2 } }}>Valor solicitado</Typography>
+            <Typography variant="body2" fontWeight="bold" sx={{ fontSize: { xs: '1.05rem', md: '1.15rem' }, lineHeight: { xs: 1.15, md: 1.2 } }}>{formatCurrency(monto)}</Typography>
                     </Box>
                     <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                      <Typography variant="body2" sx={{ fontSize: { xs: '1.05rem', md: '1.15rem' } }}>Interés (23% E.A.)</Typography>
-                      <Typography variant="body2" fontWeight="bold" sx={{ fontSize: { xs: '1.05rem', md: '1.15rem' } }}>{formatCurrency(interesEA)}</Typography>
+            <Typography variant="body2" sx={{ fontSize: { xs: '1.05rem', md: '1.15rem' }, lineHeight: { xs: 1.15, md: 1.2 } }}>Interés (23% E.A.)</Typography>
+            <Typography variant="body2" fontWeight="bold" sx={{ fontSize: { xs: '1.05rem', md: '1.15rem' }, lineHeight: { xs: 1.15, md: 1.2 } }}>{formatCurrency(interesEA)}</Typography>
                     </Box>
                     <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                      <Typography variant="body2" sx={{ fontSize: { xs: '1.05rem', md: '1.15rem' } }}>Seguro</Typography>
-                      <Typography variant="body2" fontWeight="bold" sx={{ fontSize: { xs: '1.05rem', md: '1.15rem' } }}>{formatCurrency(seguro)}</Typography>
+            <Typography variant="body2" sx={{ fontSize: { xs: '1.05rem', md: '1.15rem' }, lineHeight: { xs: 1.15, md: 1.2 } }}>Seguro</Typography>
+            <Typography variant="body2" fontWeight="bold" sx={{ fontSize: { xs: '1.05rem', md: '1.15rem' }, lineHeight: { xs: 1.15, md: 1.2 } }}>{formatCurrency(seguro)}</Typography>
                     </Box>
                     <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                      <Typography variant="body2" sx={{ fontSize: { xs: '1.05rem', md: '1.15rem' } }}>Fianza FGA + IVA</Typography>
-                      <Typography variant="body2" fontWeight="bold" sx={{ fontSize: { xs: '1.05rem', md: '1.15rem' } }}>{formatCurrency(fianza)}</Typography>
+            <Typography variant="body2" sx={{ fontSize: { xs: '1.05rem', md: '1.15rem' }, lineHeight: { xs: 1.15, md: 1.2 } }}>Fianza FGA + IVA</Typography>
+            <Typography variant="body2" fontWeight="bold" sx={{ fontSize: { xs: '1.05rem', md: '1.15rem' }, lineHeight: { xs: 1.15, md: 1.2 } }}>{formatCurrency(fianza)}</Typography>
                     </Box>
                     <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                      <Typography variant="body2" sx={{ fontSize: { xs: '1.05rem', md: '1.15rem' } }}>Administración</Typography>
-                      <Typography variant="body2" fontWeight="bold" sx={{ fontSize: { xs: '1.05rem', md: '1.15rem' } }}>{formatCurrency(administracion)}</Typography>
+            <Typography variant="body2" sx={{ fontSize: { xs: '1.05rem', md: '1.15rem' }, lineHeight: { xs: 1.15, md: 1.2 } }}>Administración</Typography>
+            <Typography variant="body2" fontWeight="bold" sx={{ fontSize: { xs: '1.05rem', md: '1.15rem' }, lineHeight: { xs: 1.15, md: 1.2 } }}>{formatCurrency(administracion)}</Typography>
                     </Box>
                     <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                      <Typography variant="body2" sx={{ fontSize: { xs: '1.05rem', md: '1.15rem' } }}>IVA</Typography>
-                      <Typography variant="body2" fontWeight="bold" sx={{ fontSize: { xs: '1.05rem', md: '1.15rem' } }}>{formatCurrency(ivaAdministracion)}</Typography>
+            <Typography variant="body2" sx={{ fontSize: { xs: '1.05rem', md: '1.15rem' }, lineHeight: { xs: 1.15, md: 1.2 } }}>IVA</Typography>
+            <Typography variant="body2" fontWeight="bold" sx={{ fontSize: { xs: '1.05rem', md: '1.15rem' }, lineHeight: { xs: 1.15, md: 1.2 } }}>{formatCurrency(ivaAdministracion)}</Typography>
                     </Box>
                   </Box>
-                  <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 2, pt: 1.25, borderTop: '1px dashed rgba(255,255,255,0.45)' }}>
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 1, pt: 0.6, borderTop: '1px dashed rgba(255,255,255,0.45)' }}>
                     <Typography variant="body1" sx={{ fontWeight: 'bold', fontSize: { xs: '1.2rem', md: '1.3rem' } }}>Total a pagar</Typography>
-                    <Typography variant="body1" sx={{ fontWeight: 'bold', color: '#FFE5E5', fontSize: { xs: '1.2rem', md: '1.3rem' } }}>{formatCurrency(totalPagar)}</Typography>
+          <Typography variant="body1" sx={{ fontWeight: 'bold', color: '#FFE5E5', fontSize: { xs: '1.2rem', md: '1.3rem' }, lineHeight: { xs: 1.15, md: 1.2 } }}>{formatCurrency(totalPagar)}</Typography>
                   </Box>
                 </Paper>
               </Box>
@@ -481,77 +459,103 @@ export default function Home() {
         </Grow>
   </Box>
 
-      {/* Sección institucional: visible solo en la fase de calculadora */}
+      {/* Sección institucional + opiniones: visibles en calculadora, pero en contenedores separados */}
       {fase === 'calculadora' && (
-        <Box id="quienes" sx={{ display: 'flex', justifyContent: 'center', mb: 6, px: { xs: 0, md: 0 }, width: '100%', maxWidth: '100vw', boxSizing: 'border-box' }}>
-          <Fade in timeout={1200}>
-            <Box
-              sx={{
-                px: { xs: 1, md: 2 },
-                py: { xs: 2, md: 4 },
-                bgcolor: '#FFF3F3',
-                borderRadius: 4,
-                boxShadow: 3,
-                maxWidth: '100%',
-                mx: 'auto',
-                textAlign: 'center',
-                boxSizing: 'border-box',
-              }}
-            >
-              <Typography variant="h4" sx={{ color: '#B00020', fontWeight: 'bold', fontFamily: 'Playfair Display, serif', letterSpacing: 1 }} gutterBottom>
-                ¿Quiénes somos?
-              </Typography>
-              <Typography variant="body1" sx={{ color: '#000000', fontFamily: 'Nunito, Arial, sans-serif', opacity: 0.95 }} mb={3}>
-                En Painita creemos que el acceso al crédito debe ser tan valioso como la piedra que nos inspira. Somos una plataforma colombiana que transforma la forma en que las personas acceden a préstamos: con rapidez, transparencia y una experiencia emocionalmente premium.
-              </Typography>
-              <Typography variant="h5" sx={{ color: '#B00020', fontWeight: 'bold', fontFamily: 'Playfair Display, serif', letterSpacing: 1 }} gutterBottom>
-                Nuestra misión
-              </Typography>
-              <Typography variant="body1" sx={{ color: '#000000', fontFamily: 'Nunito, Arial, sans-serif', opacity: 0.95 }} mb={3}>
-                Democratizar el acceso al crédito instantáneo en Colombia, ofreciendo una experiencia digital que combine confianza, elegancia y eficiencia. Cada paso, desde el onboarding hasta el pago, está diseñado para que el usuario se sienta valorado.
-              </Typography>
-              <Typography variant="h5" sx={{ color: '#B00020', fontWeight: 'bold', fontFamily: 'Playfair Display, serif', letterSpacing: 1 }} gutterBottom>
-                Nuestra visión
-              </Typography>
-              <Typography variant="body1" sx={{ color: '#000000', fontFamily: 'Nunito, Arial, sans-serif', opacity: 0.95 }} mb={3}>
-                Ser reconocidos como la plataforma de crédito más confiable y emocionalmente conectada del país. Así como la Painita es una de las gemas más raras del mundo, queremos que cada usuario sienta que ha encontrado algo único.
-              </Typography>
-              <Typography variant="h5" sx={{ color: '#B00020', fontWeight: 'bold', fontFamily: 'Playfair Display, serif', letterSpacing: 1 }} gutterBottom>
-                ¿Por qué Painita?
-              </Typography>
-              <Typography variant="body1" sx={{ color: '#000000', fontFamily: 'Nunito, Arial, sans-serif', opacity: 0.95 }}>
-                La Painita es una piedra preciosa extremadamente rara, descubierta en Myanmar y considerada una de las más valiosas por su escasez y belleza. Elegimos ese nombre porque creemos que el crédito también puede ser una joya: algo que empodera, transforma y brilla cuando se entrega con propósito. En Painita, cada usuario es tratado como lo que es: valioso.
-              </Typography>
-              {/* Beneficios */}
-              <Box sx={{ mt: 6, display: 'flex', gap: 3, justifyContent: 'center', flexWrap: 'wrap', flexDirection: { xs: 'column', sm: 'row' }, alignItems: 'center' }}>
-                <Grow in timeout={1200}>
-                  <Card sx={{ minWidth: 220, maxWidth: 260, bgcolor: '#fff', boxShadow: 4, borderRadius: 3, transition: 'transform 0.2s', '&:hover': { transform: 'scale(1.05)', boxShadow: 8 } }}>
-                    <CardContent>
-                      <Typography variant="h6" sx={{ color: '#B00020', fontFamily: 'Playfair Display, serif', mb: 1 }}>Rápido</Typography>
-                      <Typography variant="body2" sx={{ color: '#000', fontFamily: 'Nunito, Arial, sans-serif' }}>Obtén tu préstamo en minutos, sin trámites largos.</Typography>
+        <>
+          <Box id="quienes" sx={{
+            display: 'flex',
+            justifyContent: 'center',
+            mb: 0,
+            px: { xs: 0, md: 0 },
+            width: '100dvw',
+            maxWidth: 'none',
+            boxSizing: 'border-box',
+            bgcolor: '#B00020',
+            alignSelf: 'stretch',
+            marginLeft: 'calc(50% - 50dvw)',
+            marginRight: 'calc(50% - 50dvw)'
+          }}>
+            <Fade in timeout={1200}>
+              <Box
+                sx={{
+                  px: { xs: 1, md: 2 },
+                  py: { xs: 1.5, md: 2.5 },
+                  maxWidth: '100%',
+                  mx: 'auto',
+                  textAlign: 'center',
+                  boxSizing: 'border-box',
+                }}
+              >
+                <Typography variant="h4" sx={{ color: '#FFFFFF', fontWeight: 'bold', fontFamily: 'Playfair Display, serif', letterSpacing: 1 }} gutterBottom>
+                  ¿Quiénes somos?
+                </Typography>
+                <Typography variant="body1" sx={{ color: '#FFE5E5', fontFamily: 'Nunito, Arial, sans-serif' }} mb={2}>
+                  En Painita creemos que el acceso al crédito debe ser tan valioso como la piedra que nos inspira. Somos una plataforma colombiana que transforma la forma en que las personas acceden a préstamos: con rapidez, transparencia y una experiencia emocionalmente premium.
+                </Typography>
+                {/* Misión y Visión en dos contenedores lado a lado (apilados en móvil) */}
+                <Box sx={{ mt: 1.5, display: 'flex', flexDirection: { xs: 'column', md: 'row' }, gap: 2, alignItems: 'stretch', justifyContent: 'center' }}>
+                  <Card sx={{ flex: 1, minWidth: { md: 280 }, bgcolor: '#FFFFFF', borderRadius: 3, boxShadow: 3 }}>
+                    <CardContent sx={{ p: { xs: 1.5, md: 2 } }}>
+                      <Typography variant="h6" sx={{ color: '#B00020', fontWeight: 'bold', fontFamily: 'Playfair Display, serif', letterSpacing: 0.5 }} gutterBottom>
+                        Nuestra misión
+                      </Typography>
+                      <Typography variant="body2" sx={{ color: '#000000', fontFamily: 'Nunito, Arial, sans-serif', opacity: 0.95 }}>
+                        Democratizar el acceso al crédito instantáneo en Colombia, ofreciendo una experiencia digital que combine confianza, elegancia y eficiencia. Cada paso, desde el onboarding hasta el pago, está diseñado para que el usuario se sienta valorado.
+                      </Typography>
                     </CardContent>
                   </Card>
-                </Grow>
-                <Grow in timeout={1400}>
-                  <Card sx={{ minWidth: 220, maxWidth: 260, bgcolor: '#fff', boxShadow: 4, borderRadius: 3, transition: 'transform 0.2s', '&:hover': { transform: 'scale(1.05)', boxShadow: 8 } }}>
-                    <CardContent>
-                      <Typography variant="h6" sx={{ color: '#B00020', fontFamily: 'Playfair Display, serif', mb: 1 }}>Seguro</Typography>
-                      <Typography variant="body2" sx={{ color: '#000', fontFamily: 'Nunito, Arial, sans-serif' }}>Tus datos y tu dinero siempre protegidos.</Typography>
+                  <Card sx={{ flex: 1, minWidth: { md: 280 }, bgcolor: '#FFFFFF', borderRadius: 3, boxShadow: 3 }}>
+                    <CardContent sx={{ p: { xs: 1.5, md: 2 } }}>
+                      <Typography variant="h6" sx={{ color: '#B00020', fontWeight: 'bold', fontFamily: 'Playfair Display, serif', letterSpacing: 0.5 }} gutterBottom>
+                        Nuestra visión
+                      </Typography>
+                      <Typography variant="body2" sx={{ color: '#000000', fontFamily: 'Nunito, Arial, sans-serif', opacity: 0.95 }}>
+                        Ser reconocidos como la plataforma de crédito más confiable y emocionalmente conectada del país. Así como la Painita es una de las gemas más raras del mundo, queremos que cada usuario sienta que ha encontrado algo único.
+                      </Typography>
                     </CardContent>
                   </Card>
-                </Grow>
-                <Grow in timeout={1600}>
-                  <Card sx={{ minWidth: 220, maxWidth: 260, bgcolor: '#fff', boxShadow: 4, borderRadius: 3, transition: 'transform 0.2s', '&:hover': { transform: 'scale(1.05)', boxShadow: 8 } }}>
-                    <CardContent>
-                      <Typography variant="h6" sx={{ color: '#B00020', fontFamily: 'Playfair Display, serif', mb: 1 }}>Emocional</Typography>
-                      <Typography variant="body2" sx={{ color: '#000', fontFamily: 'Nunito, Arial, sans-serif' }}>Una experiencia premium, pensada para ti.</Typography>
-                    </CardContent>
-                  </Card>
-                </Grow>
+                </Box>
+                <Typography variant="h4" sx={{ color: '#FFFFFF', fontWeight: 'bold', fontFamily: 'Playfair Display, serif', letterSpacing: 1, mt: { xs: 3, md: 4 } }} gutterBottom>
+                  ¿Por qué Painita?
+                </Typography>
+                <Typography variant="body1" sx={{ color: '#FFE5E5', fontFamily: 'Nunito, Arial, sans-serif' }}>
+                  La Painita es una piedra preciosa extremadamente rara, descubierta en Myanmar y considerada una de las más valiosas por su escasez y belleza. Elegimos ese nombre porque creemos que el crédito también puede ser una joya: algo que empodera, transforma y brilla cuando se entrega con propósito. En Painita, cada usuario es tratado como lo que es: valioso.
+                </Typography>
+                {/* Beneficios */}
+                <Box sx={{ mt: 6, display: 'flex', gap: 3, justifyContent: 'center', flexWrap: 'wrap', flexDirection: { xs: 'column', sm: 'row' }, alignItems: 'center' }}>
+                  <Grow in timeout={1200}>
+                    <Card sx={{ minWidth: 220, maxWidth: 260, bgcolor: '#fff', boxShadow: 4, borderRadius: 3, transition: 'transform 0.2s', '&:hover': { transform: 'scale(1.05)', boxShadow: 8 } }}>
+                      <CardContent>
+                        <Typography variant="h6" sx={{ color: '#B00020', fontFamily: 'Playfair Display, serif', mb: 1 }}>Rápido</Typography>
+                        <Typography variant="body2" sx={{ color: '#000', fontFamily: 'Nunito, Arial, sans-serif' }}>Obtén tu préstamo en minutos, sin trámites largos.</Typography>
+                      </CardContent>
+                    </Card>
+                  </Grow>
+                  <Grow in timeout={1400}>
+                    <Card sx={{ minWidth: 220, maxWidth: 260, bgcolor: '#fff', boxShadow: 4, borderRadius: 3, transition: 'transform 0.2s', '&:hover': { transform: 'scale(1.05)', boxShadow: 8 } }}>
+                      <CardContent>
+                        <Typography variant="h6" sx={{ color: '#B00020', fontFamily: 'Playfair Display, serif', mb: 1 }}>Seguro</Typography>
+                        <Typography variant="body2" sx={{ color: '#000', fontFamily: 'Nunito, Arial, sans-serif' }}>Tus datos y tu dinero siempre protegidos.</Typography>
+                      </CardContent>
+                    </Card>
+                  </Grow>
+                  <Grow in timeout={1600}>
+                    <Card sx={{ minWidth: 220, maxWidth: 260, bgcolor: '#fff', boxShadow: 4, borderRadius: 3, transition: 'transform 0.2s', '&:hover': { transform: 'scale(1.05)', boxShadow: 8 } }}>
+                      <CardContent>
+                        <Typography variant="h6" sx={{ color: '#B00020', fontFamily: 'Playfair Display, serif', mb: 1 }}>Emocional</Typography>
+                        <Typography variant="body2" sx={{ color: '#000', fontFamily: 'Nunito, Arial, sans-serif' }}>Una experiencia premium, pensada para ti.</Typography>
+                      </CardContent>
+                    </Card>
+                  </Grow>
+                </Box>
               </Box>
+            </Fade>
+          </Box>
 
-              {/* Opiniones */}
-              <Box id="opiniones" sx={{ mt: 8, mb: 6, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+          {/* Opiniones en contenedor independiente */}
+          <Box id="opiniones" sx={{ display: 'flex', justifyContent: 'center', mb: 6, px: { xs: 0, md: 0 }, width: '100%', maxWidth: '100vw', boxSizing: 'border-box' }}>
+            <Fade in timeout={1200}>
+              <Box sx={{ px: { xs: 1, md: 2 }, py: { xs: 2, md: 4 }, bgcolor: '#FFFFFF', borderRadius: 4, boxShadow: 3, maxWidth: '100%', mx: 'auto', textAlign: 'center', boxSizing: 'border-box' }}>
                 <Typography variant="h4" sx={{ color: '#B00020', fontFamily: 'Playfair Display, serif', mb: 4 }} gutterBottom>
                   Opiniones de nuestros clientes
                 </Typography>
@@ -569,9 +573,9 @@ export default function Home() {
                   ))}
                 </Box>
               </Box>
-            </Box>
-          </Fade>
-        </Box>
+            </Fade>
+          </Box>
+        </>
       )}
 
       {/* SVG decorativo */}

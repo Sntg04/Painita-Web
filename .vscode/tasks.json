@@ -1,0 +1,21 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Iniciar API (server)",
+			"type": "shell",
+			"command": "powershell -NoLogo -NoProfile -Command Set-Location -Path \"c:\\Users\\joanh\\OneDrive\\Documentos\\GitHub\\Painita-Web\\server\"; npm install; npm run dev",
+			"isBackground": true,
+			"problemMatcher": [],
+			"group": "build"
+		},
+		{
+			"label": "Iniciar Cliente (vite)",
+			"type": "shell",
+			"command": "powershell -NoLogo -NoProfile -Command Set-Location -Path \"c:\\Users\\joanh\\OneDrive\\Documentos\\GitHub\\Painita-Web\\client\"; npm install; npm run dev",
+			"isBackground": true,
+			"problemMatcher": [],
+			"group": "build"
+		}
+	]
+}
