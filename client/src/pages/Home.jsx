@@ -65,15 +65,15 @@ export default function Home() {
   const ivaAdministracion = administracion * ivaRate;
   const totalPagar = monto + interesEA + seguro + fianza + administracion + ivaAdministracion;
 
+  // Opiniones utilizadas en la sección institucional
   const testimonials = [
-    'Me salvó en un momento crítico. La cuota fue un poco alta, pero necesitaba el dinero urgente para pagar una urgencia médica. No me gusta pagar tanto, pero prefiero eso a quedarme sin opciones. Gracias a la app, resolví todo en menos de una hora.',
-    'Sí, cobran más que un banco… pero ningún banco te presta en 5 minutos. En mi caso, era eso o perder una oportunidad de trabajo. La app fue rápida y cumplió. Recomiendo usarla con responsabilidad.',
-    'Los intereses son elevados, pero cuando uno está en apuros, lo último que quiere es esperar papeles. Esta app me prestó cuando nadie más lo hacía. Vale la pena tenerla instalada. Uno nunca sabe cuándo la va a necesitar.',
-    'No es la opción más barata, pero sí es la más rápida. Me gustó que no me pidieron tanto papeleo. Solo hay que tener claro que es un préstamo de emergencia, no para cualquier gasto.',
-    'Lo importante es pagar a tiempo. Si uno se organiza, la app es útil. Los costos son altos, sí, pero cuando me quedé sin plata para el arriendo, fue lo único que me respondió. Ahora estoy al día y puedo volver a usarla si lo necesito.',
-    'Me pareció costoso al principio, pero después entendí que la rapidez tiene su precio. Me ayudó a salir de una deuda más grave. Ojalá bajen un poco las tarifas con el tiempo, pero mientras tanto, es mejor tener esta app que depender de favores.',
+    'Me ayudó en un momento urgente. Todo fue rápido y claro.',
+    'La experiencia fue sencilla. Útil cuando necesitas liquidez al instante.',
+    'El proceso fue transparente y sin tanta traba.',
+    'Respuesta ágil y buen acompañamiento durante el proceso.',
   ];
 
+  // UI helpers y handlers faltantes
   const LoginBox = () => (
     <Box
       sx={{
@@ -91,7 +91,7 @@ export default function Home() {
   );
 
   const handleSolicitar = () => {
-    localStorage.setItem('painita_plazo', plazo);
+    try { localStorage.setItem('painita_plazo', String(plazo)); } catch {}
     setFase('celular');
     setError('');
     setMensaje('');
@@ -181,28 +181,26 @@ export default function Home() {
               fontFamily: 'Playfair Display, serif',
               fontWeight: 800,
               color: '#B00020',
-              letterSpacing: { xs: 0.6, md: 1 },
+              letterSpacing: { xs: 0.25, md: 0.35 },
               fontSize: { xs: 'clamp(1.15rem, 4.8vw + 0.2rem, 1.7rem)', md: 'clamp(1.6rem, 1.8vw + 0.6rem, 2.3rem)' },
               textShadow: '0 2px 12px rgba(176,0,32,0.15)',
-              textTransform: 'uppercase',
               lineHeight: 1.12,
             }}
           >
-            PAINITA UNA AYUDA FINANCIERA
+            Painita, una ayuda financiera
           </Typography>
           <Typography
             sx={{
               fontFamily: 'Playfair Display, serif',
               fontWeight: 800,
               color: '#B00020',
-              letterSpacing: { xs: 0.6, md: 1 },
+              letterSpacing: { xs: 0.25, md: 0.35 },
               fontSize: { xs: 'clamp(1.15rem, 4.8vw + 0.2rem, 1.7rem)', md: 'clamp(1.6rem, 1.8vw + 0.6rem, 2.3rem)' },
               textShadow: '0 2px 10px rgba(176,0,32,0.12)',
-              textTransform: 'uppercase',
               lineHeight: 1.12,
             }}
           >
-            TAN VALIOSA COMO UNA GEMA.
+            tan valiosa como una gema.
           </Typography>
           <Box sx={{ width: 120, height: 4, bgcolor: '#B00020', borderRadius: 2, mx: 'auto', mt: 1 }} />
         </Box>
@@ -224,244 +222,264 @@ export default function Home() {
         }}
       >
         <Grow in timeout={800}>
-      <Paper
-            elevation={6}
-            sx={{
-        maxWidth: isCelular ? 420 : { xs: 340, sm: 400, md: 480 },
-        width: '100%',
-        p: isCelular ? { xs: 2.5, md: 4 } : { xs: 2, md: 5 },
-              borderRadius: 4,
-              textAlign: 'center',
-              bgcolor: '#FFFFFF',
-              boxShadow: '0 8px 32px rgba(176,0,32,0.08)',
-              boxSizing: 'border-box',
-              mx: 'auto',
-            }}
-          >
-            {fase === 'calculadora' && (
-              <>
-                <Fade in timeout={1200}>
-                  <Typography
+          {fase === 'calculadora' ? (
+            <Paper
+              elevation={6}
+              sx={{
+                maxWidth: { xs: '100%', sm: 540, md: 1040 },
+                width: '100%',
+                p: { xs: 2, md: 3 },
+                borderRadius: 4,
+                bgcolor: '#FFFFFF',
+                boxShadow: '0 8px 32px rgba(176,0,32,0.08)',
+                boxSizing: 'border-box',
+                mx: 'auto',
+                display: 'flex',
+                flexDirection: 'column',
+                minHeight: { xs: 'auto', md: 480 },
+              }}
+            >
+              <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, gap: { xs: 2, md: 3 }, alignItems: { xs: 'stretch', md: 'stretch' }, flex: 1 }}>
+                {/* Left: Calculator */}
+                <Paper elevation={0} sx={{ flex: 1, p: { xs: 1, md: 2 }, bgcolor: 'transparent', textAlign: 'center', display: 'flex', flexDirection: 'column', height: '100%' }}>
+                  <Fade in timeout={1200}>
+                    <Typography
+                      variant="h4"
+                      sx={{
+                        color: '#B00020',
+                        fontWeight: 900,
+                        fontFamily: 'Playfair Display, serif',
+                        letterSpacing: 1,
+                        mb: 2,
+                        fontSize: { xs: '1.3rem', md: '2rem' },
+                        WebkitTextStroke: '0.4px #B00020',
+                        paintOrder: 'stroke fill',
+                        textShadow: '0 0 0.6px rgba(176,0,32,0.45)'
+                      }}
+                      gutterBottom
+                    >
+                      Calcula tu crédito
+                    </Typography>
+                  </Fade>
+
+                  <Typography variant="h6" gutterBottom sx={{ color: '#B00020', fontFamily: 'Playfair Display, serif' }}>
+                    ¿Cuánto necesitas?
+                  </Typography>
+                  <Slider
+                    value={monto}
+                    min={100000}
+                    max={1200000}
+                    step={10000}
+                    onChange={(e, val) => setMonto(val)}
+                    valueLabelDisplay="auto"
+                    sx={{
+                      mb: 2,
+                      color: '#B00020',
+                      '& .MuiSlider-thumb': { bgcolor: '#B00020' },
+                      '& .MuiSlider-track': { bgcolor: '#B00020' },
+                      '& .MuiSlider-rail': { bgcolor: '#fbeaec' },
+                    }}
+                  />
+                  <Typography variant="body1" mb={3} sx={{ color: '#000000', fontFamily: 'Nunito, Arial, sans-serif' }}>
+                    Monto seleccionado: <strong style={{ color: '#B00020', fontFamily: 'Nunito, Arial, sans-serif' }}>${monto.toLocaleString()}</strong>
+                  </Typography>
+
+                  <Typography variant="h6" gutterBottom sx={{ color: '#B00020', fontFamily: 'Playfair Display, serif' }}>
+                    ¿En cuántos días?
+                  </Typography>
+                  <Slider
+                    value={plazo}
+                    min={8}
+                    max={120}
+                    step={1}
+                    onChange={(e, val) => setPlazo(val)}
+                    valueLabelDisplay="auto"
+                    sx={{
+                      mb: 2,
+                      color: '#B00020',
+                      '& .MuiSlider-thumb': { bgcolor: '#B00020' },
+                      '& .MuiSlider-track': { bgcolor: '#B00020' },
+                      '& .MuiSlider-rail': { bgcolor: '#fbeaec' },
+                    }}
+                  />
+                  <Typography variant="body1" mb={3} sx={{ color: '#000000', fontFamily: 'Nunito, Arial, sans-serif' }}>
+                    Plazo seleccionado: <strong style={{ color: '#B00020', fontFamily: 'Nunito, Arial, sans-serif' }}>{plazo} días</strong>
+                  </Typography>
+
+                  {/* Empuja acciones al fondo para usar todo el alto */}
+                  <Box sx={{ flexGrow: 1 }} />
+
+
+                  <Button
+                    variant="contained"
+                    fullWidth
+                    sx={{
+                      py: 1.5,
+                      fontWeight: 'bold',
+                      fontSize: '1rem',
+                      backgroundColor: '#B00020',
+                      color: '#FFFFFF',
+                      fontFamily: 'Nunito, Arial, sans-serif',
+                      boxShadow: '0 4px 16px rgba(176,0,32,0.15)',
+                      transition: 'transform 0.2s, box-shadow 0.2s',
+                      '&:hover': {
+                        backgroundColor: '#900018',
+                        transform: 'scale(1.04)',
+                        boxShadow: '0 8px 32px rgba(176,0,32,0.25)',
+                      },
+                    }}
+                    onClick={handleSolicitar}
+                  >
+                    Solicitar Crédito
+                  </Button>
+
+                  <LoginBox />
+                  <LoginModal
+                    open={loginOpen}
+                    onClose={() => setLoginOpen(false)}
+                    onLoginSuccess={() => navigate('/dashboard', { state: { monto, plazo } })}
+                  />
+                </Paper>
+
+                {/* Right: Breakdown panel */}
+                <Paper elevation={0} sx={{ flex: 1, p: { xs: 2, md: 3 }, pt: { xs: 1, md: 2 }, bgcolor: '#B00020', color: '#FFFFFF', borderRadius: 3, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+          <Typography
                     variant="h4"
                     sx={{
-                      color: '#B00020',
-                      fontWeight: 900,
                       fontFamily: 'Playfair Display, serif',
+                      fontWeight: 900,
                       letterSpacing: 1,
-                      mb: 2,
+                      mb: 1.5,
                       fontSize: { xs: '1.3rem', md: '2rem' },
-                      WebkitTextStroke: '0.4px #B00020',
-                      paintOrder: 'stroke fill',
-                      textShadow: '0 0 0.6px rgba(176,0,32,0.45)'
+            textAlign: 'center',
                     }}
-                    gutterBottom
                   >
-                    Calcula tu crédito
-                  </Typography>
-                </Fade>
-                <Fade in timeout={1500}>
-                  <Typography variant="h6" sx={{ color: '#000000', fontFamily: 'Nunito, Arial, sans-serif' }} mb={4}>
-                    Tu plataforma de préstamos instantáneos
-                  </Typography>
-                </Fade>
-              </>
-            )}
-
-            {fase === 'calculadora' && (
-              <>
-                <Typography variant="h6" gutterBottom sx={{ color: '#B00020', fontFamily: 'Playfair Display, serif' }}>
-                  ¿Cuánto necesitas?
-                </Typography>
-                <Slider
-                  value={monto}
-                  min={100000}
-                  max={1200000}
-                  step={10000}
-                  onChange={(e, val) => setMonto(val)}
-                  valueLabelDisplay="auto"
-                  sx={{
-                    mb: 2,
-                    color: '#B00020',
-                    '& .MuiSlider-thumb': { bgcolor: '#B00020' },
-                    '& .MuiSlider-track': { bgcolor: '#B00020' },
-                    '& .MuiSlider-rail': { bgcolor: '#fbeaec' },
-                  }}
-                />
-                <Typography variant="body1" mb={3} sx={{ color: '#000000', fontFamily: 'Nunito, Arial, sans-serif' }}>
-                  Monto seleccionado: <strong style={{ color: '#B00020', fontFamily: 'Nunito, Arial, sans-serif' }}>${monto.toLocaleString()}</strong>
-                </Typography>
-
-                <Typography variant="h6" gutterBottom sx={{ color: '#B00020', fontFamily: 'Playfair Display, serif' }}>
-                  ¿En cuántos días?
-                </Typography>
-                <Slider
-                  value={plazo}
-                  min={8}
-                  max={120}
-                  step={1}
-                  onChange={(e, val) => setPlazo(val)}
-                  valueLabelDisplay="auto"
-                  sx={{
-                    mb: 2,
-                    color: '#B00020',
-                    '& .MuiSlider-thumb': { bgcolor: '#B00020' },
-                    '& .MuiSlider-track': { bgcolor: '#B00020' },
-                    '& .MuiSlider-rail': { bgcolor: '#fbeaec' },
-                  }}
-                />
-                <Typography variant="body1" mb={3} sx={{ color: '#000000', fontFamily: 'Nunito, Arial, sans-serif' }}>
-                  Plazo seleccionado: <strong style={{ color: '#B00020', fontFamily: 'Nunito, Arial, sans-serif' }}>{plazo} días</strong>
-                </Typography>
-
-                {/* Desglose de costos */}
-                <Box sx={{
-                  textAlign: 'left',
-                  border: '1px solid rgba(176,0,32,0.15)',
-                  borderRadius: 2,
-                  p: 2,
-                  mb: 3,
-                  bgcolor: '#fff8f8'
-                }}>
-                  <Typography variant="subtitle1" sx={{ color: '#B00020', fontWeight: 'bold', mb: 1 }}>
                     Desglose del crédito
                   </Typography>
-                  <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 0.5 }}>
-                    <Typography variant="body2">Valor solicitado</Typography>
-                    <Typography variant="body2" fontWeight="bold">{formatCurrency(monto)}</Typography>
+                  <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                      <Typography variant="body2" sx={{ fontSize: { xs: '1.05rem', md: '1.15rem' } }}>Valor solicitado</Typography>
+                      <Typography variant="body2" fontWeight="bold" sx={{ fontSize: { xs: '1.05rem', md: '1.15rem' } }}>{formatCurrency(monto)}</Typography>
+                    </Box>
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                      <Typography variant="body2" sx={{ fontSize: { xs: '1.05rem', md: '1.15rem' } }}>Interés (23% E.A.)</Typography>
+                      <Typography variant="body2" fontWeight="bold" sx={{ fontSize: { xs: '1.05rem', md: '1.15rem' } }}>{formatCurrency(interesEA)}</Typography>
+                    </Box>
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                      <Typography variant="body2" sx={{ fontSize: { xs: '1.05rem', md: '1.15rem' } }}>Seguro</Typography>
+                      <Typography variant="body2" fontWeight="bold" sx={{ fontSize: { xs: '1.05rem', md: '1.15rem' } }}>{formatCurrency(seguro)}</Typography>
+                    </Box>
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                      <Typography variant="body2" sx={{ fontSize: { xs: '1.05rem', md: '1.15rem' } }}>Fianza FGA + IVA</Typography>
+                      <Typography variant="body2" fontWeight="bold" sx={{ fontSize: { xs: '1.05rem', md: '1.15rem' } }}>{formatCurrency(fianza)}</Typography>
+                    </Box>
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                      <Typography variant="body2" sx={{ fontSize: { xs: '1.05rem', md: '1.15rem' } }}>Administración</Typography>
+                      <Typography variant="body2" fontWeight="bold" sx={{ fontSize: { xs: '1.05rem', md: '1.15rem' } }}>{formatCurrency(administracion)}</Typography>
+                    </Box>
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                      <Typography variant="body2" sx={{ fontSize: { xs: '1.05rem', md: '1.15rem' } }}>IVA</Typography>
+                      <Typography variant="body2" fontWeight="bold" sx={{ fontSize: { xs: '1.05rem', md: '1.15rem' } }}>{formatCurrency(ivaAdministracion)}</Typography>
+                    </Box>
                   </Box>
-                  <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 0.5 }}>
-                    <Typography variant="body2">Interés (23% E.A.)</Typography>
-                    <Typography variant="body2" fontWeight="bold">{formatCurrency(interesEA)}</Typography>
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 2, pt: 1.25, borderTop: '1px dashed rgba(255,255,255,0.45)' }}>
+                    <Typography variant="body1" sx={{ fontWeight: 'bold', fontSize: { xs: '1.2rem', md: '1.3rem' } }}>Total a pagar</Typography>
+                    <Typography variant="body1" sx={{ fontWeight: 'bold', color: '#FFE5E5', fontSize: { xs: '1.2rem', md: '1.3rem' } }}>{formatCurrency(totalPagar)}</Typography>
                   </Box>
-                  <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 0.5 }}>
-                    <Typography variant="body2">Seguro</Typography>
-                    <Typography variant="body2" fontWeight="bold">{formatCurrency(seguro)}</Typography>
-                  </Box>
-                  <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 0.5 }}>
-                    <Typography variant="body2">Fianza FGA + IVA</Typography>
-                    <Typography variant="body2" fontWeight="bold">{formatCurrency(fianza)}</Typography>
-                  </Box>
-                  <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 0.5 }}>
-                    <Typography variant="body2">Administración</Typography>
-                    <Typography variant="body2" fontWeight="bold">{formatCurrency(administracion)}</Typography>
-                  </Box>
-                  <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-                    <Typography variant="body2">IVA</Typography>
-                    <Typography variant="body2" fontWeight="bold">{formatCurrency(ivaAdministracion)}</Typography>
-                  </Box>
-                  <Box sx={{ display: 'flex', justifyContent: 'space-between', borderTop: '1px dashed rgba(176,0,32,0.3)', pt: 1, mt: 1 }}>
-                    <Typography variant="body1" fontWeight="bold">Total a pagar</Typography>
-                    <Typography variant="body1" fontWeight="bold" color="#B00020">{formatCurrency(totalPagar)}</Typography>
-                  </Box>
-                </Box>
+                </Paper>
+              </Box>
+            </Paper>
+          ) : (
+            <Paper
+              elevation={6}
+              sx={{
+                maxWidth: isCelular ? 420 : { xs: 340, sm: 400, md: 480 },
+                width: '100%',
+                p: isCelular ? { xs: 2.5, md: 4 } : { xs: 2, md: 5 },
+                borderRadius: 4,
+                textAlign: 'center',
+                bgcolor: '#FFFFFF',
+                boxShadow: '0 8px 32px rgba(176,0,32,0.08)',
+                boxSizing: 'border-box',
+                mx: 'auto',
+              }}
+            >
+              {fase === 'celular' && (
+                <>
+                  <Typography variant="h6" gutterBottom sx={{ color: '#B00020', fontFamily: 'Playfair Display, serif' }}>
+                    Ingresa tu número de celular
+                  </Typography>
+                  <TextField
+                    fullWidth
+                    label="Celular"
+                    value={celular}
+                    onChange={handleCelularChange}
+                    error={!!error}
+                    helperText={error}
+                    inputProps={{ maxLength: 10 }}
+                    margin="normal"
+                    sx={{
+                      '& .MuiInputBase-root': { color: '#B00020' },
+                      '& label': { color: '#B00020' },
+                      '& .MuiOutlinedInput-notchedOutline': { borderColor: '#B00020' },
+                      '& .MuiFormHelperText-root': { color: '#B00020' },
+                    }}
+                  />
+                  <Button
+                    variant="contained"
+                    fullWidth
+                    sx={{ mt: 2, py: 1.2, fontWeight: 'bold', backgroundColor: '#B00020', color: '#fff', '&:hover': { backgroundColor: '#900018' } }}
+                    onClick={handleContinuar}
+                  >
+                    Enviar código
+                  </Button>
 
-                <Button
-                  variant="contained"
-                  fullWidth
-                  sx={{
-                    py: 1.5,
-                    fontWeight: 'bold',
-                    fontSize: '1rem',
-                    backgroundColor: '#B00020',
-                    color: '#FFFFFF',
-                    fontFamily: 'Nunito, Arial, sans-serif',
-                    boxShadow: '0 4px 16px rgba(176,0,32,0.15)',
-                    transition: 'transform 0.2s, box-shadow 0.2s',
-                    '&:hover': {
-                      backgroundColor: '#900018',
-                      transform: 'scale(1.04)',
-                      boxShadow: '0 8px 32px rgba(176,0,32,0.25)',
-                    },
-                  }}
-                  onClick={handleSolicitar}
-                >
-                  Solicitar Crédito
-                </Button>
-
-                <LoginBox />
-                <LoginModal
-                  open={loginOpen}
-                  onClose={() => setLoginOpen(false)}
-                  onLoginSuccess={() => navigate('/dashboard', { state: { monto, plazo } })}
-                />
-              </>
-            )}
-
-            {fase === 'celular' && (
-              <>
-                <Typography variant="h6" gutterBottom sx={{ color: '#B00020', fontFamily: 'Playfair Display, serif' }}>
-                  Ingresa tu número de celular
-                </Typography>
-                <TextField
-                  fullWidth
-                  label="Celular"
-                  value={celular}
-                  onChange={handleCelularChange}
-                  error={!!error}
-                  helperText={error}
-                  inputProps={{ maxLength: 10 }}
-                  margin="normal"
-                  sx={{
-                    '& .MuiInputBase-root': { color: '#B00020' },
-                    '& label': { color: '#B00020' },
-                    '& .MuiOutlinedInput-notchedOutline': { borderColor: '#B00020' },
-                    '& .MuiFormHelperText-root': { color: '#B00020' },
-                  }}
-                />
-                <Button
-                  variant="contained"
-                  fullWidth
-                  sx={{ mt: 2, py: 1.2, fontWeight: 'bold', backgroundColor: '#B00020', color: '#fff', '&:hover': { backgroundColor: '#900018' } }}
-                  onClick={handleContinuar}
-                >
-                  Enviar código
-                </Button>
-
-                {mensaje && (
-                  <>
-                    <Typography variant="body2" sx={{ color: '#B00020', fontFamily: 'Nunito, Arial, sans-serif' }} mt={3}>
-                      {mensaje}
-                    </Typography>
-                    {devOtp && (
-                      <Typography variant="caption" sx={{ display: 'block', mt: 1 }} color="text.secondary">
-                        Código de prueba (local): {devOtp}{' '}
-                        <Button size="small" onClick={() => setCodigo(String(devOtp))}>Pegar código</Button>
+                  {mensaje && (
+                    <>
+                      <Typography variant="body2" sx={{ color: '#B00020', fontFamily: 'Nunito, Arial, sans-serif' }} mt={3}>
+                        {mensaje}
                       </Typography>
-                    )}
-                    <TextField
-                      fullWidth
-                      label="Código OTP"
-                      value={codigo}
-                      onChange={handleCodigoChange}
-                      error={!!error}
-                      helperText={error}
-                      inputProps={{ maxLength: 6 }}
-                      margin="normal"
-                      sx={{ mt: 2, '& .MuiInputBase-root': { color: '#B00020' }, '& label': { color: '#B00020' }, '& .MuiOutlinedInput-notchedOutline': { borderColor: '#B00020' }, '& .MuiFormHelperText-root': { color: '#B00020' } }}
-                    />
-                    <Button
-                      variant="contained"
-                      fullWidth
-                      sx={{ mt: 2, py: 1.2, fontWeight: 'bold', backgroundColor: '#B00020', color: '#fff', '&:hover': { backgroundColor: '#900018' } }}
-                      onClick={handleVerificar}
-                    >
-                      Verificar código
-                    </Button>
-                  </>
-                )}
-              </>
-            )}
+                      {devOtp && (
+                        <Typography variant="caption" sx={{ display: 'block', mt: 1 }} color="text.secondary">
+                          Código de prueba (local): {devOtp}{' '}
+                          <Button size="small" onClick={() => setCodigo(String(devOtp))}>Pegar código</Button>
+                        </Typography>
+                      )}
+                      <TextField
+                        fullWidth
+                        label="Código OTP"
+                        value={codigo}
+                        onChange={handleCodigoChange}
+                        error={!!error}
+                        helperText={error}
+                        inputProps={{ maxLength: 6 }}
+                        margin="normal"
+                        sx={{ mt: 2, '& .MuiInputBase-root': { color: '#B00020' }, '& label': { color: '#B00020' }, '& .MuiOutlinedInput-notchedOutline': { borderColor: '#B00020' }, '& .MuiFormHelperText-root': { color: '#B00020' } }}
+                      />
+                      <Button
+                        variant="contained"
+                        fullWidth
+                        sx={{ mt: 2, py: 1.2, fontWeight: 'bold', backgroundColor: '#B00020', color: '#fff', '&:hover': { backgroundColor: '#900018' } }}
+                        onClick={handleVerificar}
+                      >
+                        Verificar código
+                      </Button>
+                    </>
+                  )}
+                </>
+              )}
 
-            {fase === 'password' && <PasswordSetup phone={celular} monto={monto} plazo={plazo} />}
+              {fase === 'password' && <PasswordSetup phone={celular} monto={monto} plazo={plazo} />}
 
-            {fase === 'final' && (
-              <Typography variant="h6" sx={{ color: '#B00020', fontFamily: 'Playfair Display, serif' }} mt={4}>
-                🎉 Cuenta creada exitosamente. Puedes continuar al pago.
-              </Typography>
-            )}
-          </Paper>
+              {fase === 'final' && (
+                <Typography variant="h6" sx={{ color: '#B00020', fontFamily: 'Playfair Display, serif' }} mt={4}>
+                  🎉 Cuenta creada exitosamente. Puedes continuar al pago.
+                </Typography>
+              )}
+            </Paper>
+          )}
         </Grow>
-      </Box>
+  </Box>
 
       {/* Sección institucional: visible solo en la fase de calculadora */}
       {fase === 'calculadora' && (
